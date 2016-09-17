@@ -1,31 +1,40 @@
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 import commands.AbstractCommandFactory;
 import commands.CatCommand;
 import commands.PwdCommand;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-/**
- * Created by equi on 08.09.16.
- *
- * @author Kravchenko Dima
- */
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Our shell.
  */
-public class ShellImpl implements Shell {
+public final class ShellImpl implements Shell {
 
-    private static final Logger LOGGER = Logger.getLogger(ShellImpl.class.getName());
-    private AbstractCommandFactory commandFactory;
+    @NotNull private static final Logger LOGGER = Logger.getLogger(ShellImpl.class.getName());
+    @NotNull final Map<String, String> environment; // package-private for testing
+    @NotNull private final AbstractCommandFactory commandFactory;
 
-    public ShellImpl(AbstractCommandFactory commandFactory) {
+    public ShellImpl(@NotNull AbstractCommandFactory commandFactory) {
         this.commandFactory = commandFactory;
         registerShellCommands();
+
+        environment = new HashMap<>();
+
+        /*
+          we are starting with `/` directory.
+          As in `sh`, pwd is just a variable in my shell.
+         */
+        environment.put("pwd", "/");
     }
 
     /**
@@ -38,6 +47,15 @@ public class ShellImpl implements Shell {
             LOGGER.log(Level.SEVERE, "shell commands execution failed.", e);
             System.exit(1);
         }
+    }
+
+    @Nullable
+    private String getVariable(@NotNull String name) {
+        return environment.getOrDefault(name, "");
+    }
+
+    private void setVariable(@NotNull String name, @NotNull String value) {
+        environment.put(name, value);
     }
 
     /**
@@ -71,23 +89,110 @@ public class ShellImpl implements Shell {
      * processes next line from prompt
      * @param line shell command to be processed
      */
-    private void processLine(String line) throws ExecutionException, InvocationTargetException {
-        String[] tokens = line.split(" ");
-        Arrays.stream(tokens).filter(this::isStringArg).map(this::substituteVariables);
-        commandFactory.getCommand(tokens[0]).execute();
+    private void processLine(@NotNull String line) throws ExecutionException, InvocationTargetException {
+        line = parseLine(line); // tokenize first time and substitute variables
+        evaluate(line);
     }
 
     /**
-     * checks it this token is a double-quoted string
-     * @param token token you want to check
-     * @return whether this token is a double-quoted string
+     * I make it package-private only for tests
+     * @param line line you want to parse
+     * @return line after "tokenization" + variables substitution
      */
-    private boolean isStringArg(String token) {
-        return (token.charAt(0) == '"' && token.charAt(token.length() - 1) == '"');
+    @NotNull
+    String parseLine(@NotNull String line) {
+        Tokenizer tokenizer = new Tokenizer(line);
+        Token[] tokens = tokenizer.tokenize();
+
+        for (Token token : tokens) {
+            switch (token.getTokenType()) {
+                case WORD:
+                case DOUBLE_QUOTED_STRING:
+                    substituteVariables(token);
+                    break;
+                case ASSIGNMENT:
+                    assignVariable(token);
+                    break;
+            }
+        }
+
+        StringBuilder resultLine = new StringBuilder();
+        Arrays.stream(tokens).forEach(
+                token -> {resultLine.append(token.getContent()); resultLine.append(" ");}
+        );
+        return resultLine.toString();
     }
 
-    private String substituteVariables(String token) {
-        return token;
+    /**
+     * substitute variable inside token.
+     * This method package-private only for testing
+     * @param token token in which content we should substitute variables
+     */
+    void substituteVariables(@NotNull Token token) {
+        if (token.getTokenType() != Token.TokenType.WORD
+                && token.getTokenType() != Token.TokenType.DOUBLE_QUOTED_STRING) {
+            return; // no need to substitute anything
+        }
+
+        String content = token.getContent();
+        StringBuilder newContent = new StringBuilder();
+
+        Pattern variablePattern = Pattern.compile(Token.VARIABLE_PATTERN);
+        Matcher variableMatcher = variablePattern.matcher(content);
+
+        int lastEnd = 0;
+        while (variableMatcher.find()) {
+            newContent.append(content.substring(lastEnd, variableMatcher.start()));
+            String variableName = variableMatcher.group().substring(1); // throw away '$' sign
+            newContent.append(getVariable(variableName));
+            lastEnd = variableMatcher.end();
+        }
+        newContent.append(content.substring(lastEnd));
+
+        token.changeContent(newContent.toString());
+    }
+
+    /**
+     * process ASSIGN token
+     * package-private for testing
+     * @param token token of type ASSIGNMENT
+     */
+    void assignVariable(@NotNull Token token) {
+        if (token.getTokenType() != Token.TokenType.ASSIGNMENT) {
+            throw new IllegalArgumentException("this operation only for ASSIGNMENT tokens");
+        }
+
+        String content = token.getContent();
+        int eqSign = content.indexOf('=');
+
+        String variableName = content.substring(0, eqSign);
+        String rawValue = content.substring(eqSign + 1);
+
+        /*
+         This is a pretty dirty trick.
+         The value to the right of `=` sign can be some string with variable itself, e.g.
+          > X=123
+          > Y="$X" (or just Y=$X)
+          > echo $Y
+          should be `123`
+          I don't want to write one more parser only for this cases,
+          so I just tokenize string `"echo " + rawValue`, take
+          second token (which should be an appropriate token for `rawValue`) and use already written function
+          `substituteVariables` on it.
+         */
+
+        Tokenizer tokenizer = new Tokenizer("echo " + rawValue);
+        Token tokenValue = tokenizer.tokenize()[1];
+        substituteVariables(tokenValue);
+
+        setVariable(variableName, tokenValue.getContent());
+
+        // this line is unnecessary but I add it just for clarity
+        token.changeContent(variableName + "=" + tokenValue.getContent());
+    }
+
+    private void evaluate(@NotNull String line) {
+
     }
 
 }

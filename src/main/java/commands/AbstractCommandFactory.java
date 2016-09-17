@@ -1,16 +1,29 @@
 package commands;
 
+import com.sun.istack.internal.NotNull;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Created by equi on 14.09.16.
- *
- * @author Kravchenko Dima
+ * Interface for command factories
  */
 public interface AbstractCommandFactory {
 
-    Command getCommand(String name) throws IllegalArgumentException, InvocationTargetException;
+    /**
+     * construct command by it's name
+     * @param name name of command
+     * @return command to be executed
+     * @throws IllegalArgumentException if your name does not comply to any known command
+     * @throws InvocationTargetException if command's constructor throws any exception
+     */
+    Command getCommand(@NotNull String name) throws IllegalArgumentException, InvocationTargetException;
 
-    boolean registerCommand(Class<?> clazz) throws IllegalArgumentException;
+    /**
+     *
+     * @param clazz class you want to register
+     * @return whether your command
+     * @throws IllegalArgumentException
+     */
+    boolean registerCommand(@NotNull Class<?> clazz) throws IllegalArgumentException;
 
 }

@@ -1,15 +1,11 @@
 package commands;
 
+import com.sun.istack.internal.NotNull;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-
-/**
- * Created by equi on 09.09.16.
- *
- * @author Kravchenko Dima
- */
 
 /**
  * enum is a best way to make class singleton.
@@ -20,7 +16,10 @@ public enum CommandFactory implements AbstractCommandFactory {
 
     private Map<String, Class<?>> registeredCommands = new HashMap<>();
 
-    public Command getCommand(String name) throws IllegalArgumentException, InvocationTargetException {
+    /**
+     * {@inheritDoc}
+     */
+    public Command getCommand(@NotNull String name) throws IllegalArgumentException, InvocationTargetException {
         if (registeredCommands.containsKey(name)) {
             return createInstance(registeredCommands.get(name));
         }
@@ -28,7 +27,10 @@ public enum CommandFactory implements AbstractCommandFactory {
         throw new IllegalArgumentException("unknown command '" + name + "'.");
     }
 
-    public boolean registerCommand(Class<?> clazz) throws IllegalArgumentException {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean registerCommand(@NotNull Class<?> clazz) throws IllegalArgumentException {
         if (hasCommandAnnotation(clazz)
                 && hasPublicDefaultConstructor(clazz)
                 && implementsCommand(clazz)) {
@@ -42,7 +44,7 @@ public enum CommandFactory implements AbstractCommandFactory {
         throw new IllegalArgumentException(clazz.getName() + " does not seem to be a valid command");
     }
 
-    private Command createInstance(Class<?> commandClass) throws InvocationTargetException {
+    private Command createInstance(@NotNull Class<?> commandClass) throws InvocationTargetException {
         try {
             return (Command)commandClass.getConstructor().newInstance();
         } catch (NoSuchMethodException|InstantiationException|IllegalAccessException e) {
@@ -53,16 +55,16 @@ public enum CommandFactory implements AbstractCommandFactory {
         return null; // this is also impossible
     }
 
-    private boolean hasCommandAnnotation(Class<?> clazz) {
+    private boolean hasCommandAnnotation(@NotNull Class<?> clazz) {
         return clazz.getAnnotation(CommandAnnotation.class) != null;
     }
 
-    private boolean hasPublicDefaultConstructor(Class<?> clazz) {
+    private boolean hasPublicDefaultConstructor(@NotNull Class<?> clazz) {
         return Stream.of(clazz.getConstructors())
                 .anyMatch((c) -> c.getParameterCount() == 0);
     }
 
-    private boolean implementsCommand(Class<?> clazz) {
+    private boolean implementsCommand(@NotNull Class<?> clazz) {
         return Command.class.isAssignableFrom(clazz);
     }
 

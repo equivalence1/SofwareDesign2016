@@ -6,20 +6,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by equi on 09.09.16.
- *
- * @author Kravchenko Dima
+ * Each new command must be annotated with this annotation.
+ * It should specify its name and it will be used in
+ * {@link CommandFactory} do determine next command to be executed.
+ * This annotation should be package-private
+ * (It forces user to store all functions in `commands` package).
  */
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface CommandAnnotation {
+@interface CommandAnnotation {
+
     /**
-     * Each new command should be annotated with this annotation.
-     * It should specify its name and it will be used in
-     * {@link CommandFactory} do determine next command to be executed.
      *
      * @return name of corresponding command
      */
     String commandName() default "";
+
 }
