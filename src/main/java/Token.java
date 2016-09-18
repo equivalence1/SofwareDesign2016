@@ -1,4 +1,4 @@
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Tokens in which we split our input string.
@@ -8,9 +8,10 @@ import com.sun.istack.internal.NotNull;
  */
 public final class Token {
 
-    public static final String VARIABLE_PATTERN = "\\$[a-zA-Z](\\w*)";
+    public static final String VARIABLE_PATTERN = "[a-zA-Z](\\w*)";
 
-    @NotNull private final TokenType type;
+    @NotNull
+    private final TokenType type;
     @NotNull private String content;
 
     public Token(@NotNull TokenType type, @NotNull String content) {
@@ -39,6 +40,21 @@ public final class Token {
         content = newContent;
     }
 
+    /**
+     * @return token's content representation ready for printing
+     */
+    @NotNull
+    public String printToken() {
+        switch (type) {
+            case DOUBLE_QUOTED_STRING:
+                return "\"" + content + "\"";
+            case SINGLE_QUOTED_STRING:
+                return "'" + content + "'";
+            default:
+                return content;
+        }
+    }
+
     private void checkContent() {
         if (type == TokenType.PIPE && !content.equals("|")) {
             throw new IllegalArgumentException("Pipe should be only symbol `|`, not `" + content + "`");
@@ -50,7 +66,7 @@ public final class Token {
         }
 
         if (type == TokenType.ASSIGNMENT) {
-            String pattern = "$" + VARIABLE_PATTERN + "=.*^";
+            String pattern = VARIABLE_PATTERN + "=.*";
             if (!content.matches(pattern)) {
                 throw new IllegalArgumentException("invalid assignment `" + content + "`\n"
                         + "it should match regex `" + pattern + "`");

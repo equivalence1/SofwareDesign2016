@@ -7,13 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-/**
- * Created by equi on 17.09.16.
- *
- * @author Kravchenko Dima
- */
 public class TokenizerTest {
 
     private static Map<String, Token[]> samples;
@@ -58,9 +53,13 @@ public class TokenizerTest {
                 new Token(Token.TokenType.ASSIGNMENT, "Y=\'123\'")
         };
 
+        String sample4 = "";
+        Token[] answer4 = new Token[0];
+
         samples.put(sample1, answer1);
         samples.put(sample2, answer2);
         samples.put(sample3, answer3);
+        samples.put(sample4, answer4);
     }
 
     @Test

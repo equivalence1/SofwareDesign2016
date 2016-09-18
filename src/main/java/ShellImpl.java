@@ -1,8 +1,8 @@
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import commands.AbstractCommandFactory;
 import commands.CatCommand;
 import commands.PwdCommand;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -20,7 +20,8 @@ import java.util.regex.Pattern;
  */
 public final class ShellImpl implements Shell {
 
-    @NotNull private static final Logger LOGGER = Logger.getLogger(ShellImpl.class.getName());
+    @NotNull
+    private static final Logger LOGGER = Logger.getLogger(ShellImpl.class.getName());
     @NotNull final Map<String, String> environment; // package-private for testing
     @NotNull private final AbstractCommandFactory commandFactory;
 
@@ -118,7 +119,7 @@ public final class ShellImpl implements Shell {
 
         StringBuilder resultLine = new StringBuilder();
         Arrays.stream(tokens).forEach(
-                token -> {resultLine.append(token.getContent()); resultLine.append(" ");}
+                token -> {resultLine.append(token.printToken()); resultLine.append(" ");}
         );
         return resultLine.toString();
     }
@@ -137,7 +138,7 @@ public final class ShellImpl implements Shell {
         String content = token.getContent();
         StringBuilder newContent = new StringBuilder();
 
-        Pattern variablePattern = Pattern.compile(Token.VARIABLE_PATTERN);
+        Pattern variablePattern = Pattern.compile("\\$" + Token.VARIABLE_PATTERN);
         Matcher variableMatcher = variablePattern.matcher(content);
 
         int lastEnd = 0;
@@ -186,9 +187,7 @@ public final class ShellImpl implements Shell {
         substituteVariables(tokenValue);
 
         setVariable(variableName, tokenValue.getContent());
-
-        // this line is unnecessary but I add it just for clarity
-        token.changeContent(variableName + "=" + tokenValue.getContent());
+        token.changeContent(""); // we already processed all assignments
     }
 
     private void evaluate(@NotNull String line) {

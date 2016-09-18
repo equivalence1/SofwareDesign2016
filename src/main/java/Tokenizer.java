@@ -1,4 +1,4 @@
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -16,6 +16,7 @@ public final class Tokenizer {
     private boolean isInsideDoubleQuoted;
     private boolean isAssignment;
     private boolean isPipe;
+    private boolean isOmitted;
 
     public Tokenizer(@NotNull String line) {
         this.line = line.trim() + " "; // we add space only because its easier to not to think about end of line
@@ -30,6 +31,10 @@ public final class Tokenizer {
      */
     @NotNull
     public Token[] tokenize() throws IllegalArgumentException {
+        if (line.trim().isEmpty()) {
+            return new Token[0];
+        }
+
         ArrayList<Token> tokens = new ArrayList<>();
 
         while (lastPosition < line.length()) {
@@ -88,8 +93,12 @@ public final class Tokenizer {
             isInsideSingleQuoted ^= line.charAt(currentPosition) == '\'';
         } else
         if (!isInsideSingleQuoted) {
-            isInsideDoubleQuoted ^= line.charAt(currentPosition) == '"';
+            if (!(isInsideDoubleQuoted && isOmitted)) {
+                isInsideDoubleQuoted ^= line.charAt(currentPosition) == '"';
+            }
         }
+
+        isOmitted = !isOmitted && line.charAt(currentPosition) == '\\';
     }
 
     private boolean shouldProceed() {
