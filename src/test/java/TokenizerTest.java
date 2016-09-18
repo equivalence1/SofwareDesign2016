@@ -20,8 +20,8 @@ public class TokenizerTest {
     public static void createSamples() {
         samples = new HashMap<>();
 
-        String sample1 = "echo 123 ' 123' | wc | echo '12 3' \"123 123 12   \"";
-        Token[] answer1 = {
+        final String sample1 = "echo 123 ' 123' | wc | echo '12 3' \"123 123 12   \"";
+        final Token[] answer1 = {
                 new Token(Token.TokenType.COMMAND, "echo"),
                 new Token(Token.TokenType.WORD, "123"),
                 new Token(Token.TokenType.SINGLE_QUOTED_STRING, "' 123'"),
@@ -33,8 +33,8 @@ public class TokenizerTest {
                 new Token(Token.TokenType.DOUBLE_QUOTED_STRING, "\"123 123 12   \"")
         };
 
-        String sample2 = "FILE=example.txt|echo $FILE   \" $FILE \" '$FILE'";
-        Token[] answer2 = {
+        final String sample2 = "FILE=example.txt|echo $FILE   \" $FILE \" '$FILE'";
+        final Token[] answer2 = {
                 new Token(Token.TokenType.ASSIGNMENT, "FILE=example.txt"),
                 new Token(Token.TokenType.PIPE, "|"),
                 new Token(Token.TokenType.COMMAND, "echo"),
@@ -43,8 +43,8 @@ public class TokenizerTest {
                 new Token(Token.TokenType.SINGLE_QUOTED_STRING, "'$FILE'")
         };
 
-        String sample3 = "X=\"123\"|echo 1|Y='123'";
-        Token[] answer3 = {
+        final String sample3 = "X=\"123\"|echo 1|Y='123'";
+        final Token[] answer3 = {
                 new Token(Token.TokenType.ASSIGNMENT, "X=\"123\""),
                 new Token(Token.TokenType.PIPE, "|"),
                 new Token(Token.TokenType.COMMAND, "echo"),
@@ -53,8 +53,8 @@ public class TokenizerTest {
                 new Token(Token.TokenType.ASSIGNMENT, "Y=\'123\'")
         };
 
-        String sample4 = "";
-        Token[] answer4 = new Token[0];
+        final String sample4 = "";
+        final Token[] answer4 = new Token[0];
 
         samples.put(sample1, answer1);
         samples.put(sample2, answer2);

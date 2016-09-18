@@ -19,6 +19,7 @@ public enum CommandFactory implements AbstractCommandFactory {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Command getCommand(@NotNull String name) throws IllegalArgumentException, InvocationTargetException {
         if (registeredCommands.containsKey(name)) {
             return createInstance(registeredCommands.get(name));
@@ -30,6 +31,7 @@ public enum CommandFactory implements AbstractCommandFactory {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean registerCommand(@NotNull Class<?> clazz) throws IllegalArgumentException {
         if (hasCommandAnnotation(clazz)
                 && hasPublicDefaultConstructor(clazz)

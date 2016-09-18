@@ -71,7 +71,7 @@ public final class ShellImpl implements Shell {
      * reading lines from prompt
      */
     private void processLines() {
-        Scanner scanner = new Scanner(System.in);
+        final Scanner scanner = new Scanner(System.in);
         String line = "";
 
         while (scanner.hasNextLine()) {
@@ -102,8 +102,8 @@ public final class ShellImpl implements Shell {
      */
     @NotNull
     String parseLine(@NotNull String line) {
-        Tokenizer tokenizer = new Tokenizer(line);
-        Token[] tokens = tokenizer.tokenize();
+        final Tokenizer tokenizer = new Tokenizer(line);
+        final Token[] tokens = tokenizer.tokenize();
 
         for (Token token : tokens) {
             switch (token.getTokenType()) {
@@ -135,11 +135,11 @@ public final class ShellImpl implements Shell {
             return; // no need to substitute anything
         }
 
-        String content = token.getContent();
-        StringBuilder newContent = new StringBuilder();
+        final String content = token.getContent();
+        final StringBuilder newContent = new StringBuilder();
 
-        Pattern variablePattern = Pattern.compile("\\$" + Token.VARIABLE_PATTERN);
-        Matcher variableMatcher = variablePattern.matcher(content);
+        final Pattern variablePattern = Pattern.compile("\\$" + Token.VARIABLE_PATTERN);
+        final Matcher variableMatcher = variablePattern.matcher(content);
 
         int lastEnd = 0;
         while (variableMatcher.find()) {
@@ -163,11 +163,11 @@ public final class ShellImpl implements Shell {
             throw new IllegalArgumentException("this operation only for ASSIGNMENT tokens");
         }
 
-        String content = token.getContent();
+        final String content = token.getContent();
         int eqSign = content.indexOf('=');
 
-        String variableName = content.substring(0, eqSign);
-        String rawValue = content.substring(eqSign + 1);
+        final String variableName = content.substring(0, eqSign);
+        final String rawValue = content.substring(eqSign + 1);
 
         /*
          This is a pretty dirty trick.
@@ -182,16 +182,21 @@ public final class ShellImpl implements Shell {
           `substituteVariables` on it.
          */
 
-        Tokenizer tokenizer = new Tokenizer("echo " + rawValue);
-        Token tokenValue = tokenizer.tokenize()[1];
+        final Tokenizer tokenizer = new Tokenizer("echo " + rawValue);
+        final Token tokenValue = tokenizer.tokenize()[1];
         substituteVariables(tokenValue);
 
         setVariable(variableName, tokenValue.getContent());
         token.changeContent(""); // we already processed all assignments
     }
 
+    /**
+     * evaluates the line.
+     * @param line user's line after "tokenization" and substitution
+     */
     private void evaluate(@NotNull String line) {
-
+        final Tokenizer tokenizer = new Tokenizer(line);
+        final Token[] tokens = tokenizer.tokenize();
     }
 
 }

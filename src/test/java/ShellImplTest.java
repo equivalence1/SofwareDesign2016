@@ -11,21 +11,21 @@ public class ShellImplTest {
         shell.environment.put("x", "123");
         shell.environment.put("some_1variable1", "aba c aba ");
 
-        Token testToken1 = new Token(Token.TokenType.DOUBLE_QUOTED_STRING, "\"$x$'$$some_1variable1'123'\"");
+        final Token testToken1 = new Token(Token.TokenType.DOUBLE_QUOTED_STRING, "\"$x$'$$some_1variable1'123'\"");
+        final String answer1 = "123$'$aba c aba '123'";
         shell.substituteVariables(testToken1);
-        String answer1 = "123$'$aba c aba '123'";
 
         assertEquals(answer1, testToken1.getContent());
 
-        Token testToken2 = new Token(Token.TokenType.SINGLE_QUOTED_STRING, "\'$x$'$$some_1variable1\"123\"\'");
+        final Token testToken2 = new Token(Token.TokenType.SINGLE_QUOTED_STRING, "\'$x$'$$some_1variable1\"123\"\'");
+        final String answer2 = "$x$'$$some_1variable1\"123\"";
         shell.substituteVariables(testToken1);
-        String answer2 = "$x$'$$some_1variable1\"123\"";
 
         assertEquals(answer2, testToken2.getContent());
 
-        Token testToken3 = new Token(Token.TokenType.DOUBLE_QUOTED_STRING, "\"\\\"\"");
+        final Token testToken3 = new Token(Token.TokenType.DOUBLE_QUOTED_STRING, "\"\\\"\"");
+        final String answer3 = "\\\"";
         shell.substituteVariables(testToken3);
-        String answer3 = "\\\"";
 
         assertEquals(answer3, testToken3.getContent());
     }
@@ -35,10 +35,15 @@ public class ShellImplTest {
         ShellImpl shell = new ShellImpl(CommandFactory.INSTANCE);
 
         // it's not a correct bash line, but it should be parsed by our parser
-        String line = "some_var=\"123\"|x=\"$some_var\"|y='$some_var'|z=$y";
-        String rightAnswer = " |  |  |  ";
+        final String sample1 = "some_var=\"123\"|x=\"$some_var\"|y='$some_var'|z=$y";
+        final String answer1 = " |  |  |  ";
 
-        assertEquals(rightAnswer, shell.parseLine(line));
+        assertEquals(answer1, shell.parseLine(sample1));
+
+        final String sample2 = "x=\"aba c aba\"|echo $x|echo \"\\\"$x\"";
+        final String answer2 = " | echo aba c aba | echo \"\\\"aba c aba\" ";
+
+        assertEquals(answer2, shell.parseLine(sample2));
     }
 
 }

@@ -35,7 +35,7 @@ public final class Tokenizer {
             return new Token[0];
         }
 
-        ArrayList<Token> tokens = new ArrayList<>();
+        final ArrayList<Token> tokens = new ArrayList<>();
 
         while (lastPosition < line.length()) {
             tokens.add(getNextToken());
@@ -65,8 +65,8 @@ public final class Tokenizer {
                     + "' starting from position " + lastPosition + "\n(" + line.substring(lastPosition) + ")");
         }
 
-        Token.TokenType tokenType = getTokenType();
-        String content = getTokenContent();
+        final Token.TokenType tokenType = getTokenType();
+        final String content = getTokenContent();
 
         isExpectingCommand = tokenType == Token.TokenType.PIPE;
 
@@ -83,15 +83,16 @@ public final class Tokenizer {
         isInsideSingleQuoted = line.charAt(lastPosition) == '\'';
         isAssignment         = line.charAt(lastPosition) == '=';
         isPipe               = line.charAt(lastPosition) == '|';
+        isOmitted            = false;
     }
 
     private void updateFlags() {
         if (!isInsideSingleQuoted && !isInsideDoubleQuoted && line.charAt(currentPosition) == '=') {
             isAssignment = true;
-        } else
+        }
         if (!isInsideDoubleQuoted) {
             isInsideSingleQuoted ^= line.charAt(currentPosition) == '\'';
-        } else
+        }
         if (!isInsideSingleQuoted) {
             if (!(isInsideDoubleQuoted && isOmitted)) {
                 isInsideDoubleQuoted ^= line.charAt(currentPosition) == '"';
