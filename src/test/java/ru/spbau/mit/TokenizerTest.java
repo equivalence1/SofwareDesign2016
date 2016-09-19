@@ -1,7 +1,11 @@
+package ru.spbau.mit;
+
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
+import ru.spbau.mit.parsing.Token;
+import ru.spbau.mit.parsing.Tokenizer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +18,7 @@ public class TokenizerTest {
     private static Map<String, Token[]> samples;
 
     @Rule
-    public Timeout globalTimeout = new Timeout(2, TimeUnit.SECONDS);
+    public final Timeout globalTimeout = new Timeout(2, TimeUnit.SECONDS);
 
     @BeforeClass
     public static void createSamples() {
@@ -24,13 +28,13 @@ public class TokenizerTest {
         final Token[] answer1 = {
                 new Token(Token.TokenType.COMMAND, "echo"),
                 new Token(Token.TokenType.WORD, "123"),
-                new Token(Token.TokenType.SINGLE_QUOTED_STRING, "' 123'"),
+                new Token(Token.TokenType.SINGLE_QUOTED_STRING, " 123"),
                 new Token(Token.TokenType.PIPE, "|"),
                 new Token(Token.TokenType.COMMAND, "wc"),
                 new Token(Token.TokenType.PIPE, "|"),
                 new Token(Token.TokenType.COMMAND, "echo"),
-                new Token(Token.TokenType.SINGLE_QUOTED_STRING, "'12 3'"),
-                new Token(Token.TokenType.DOUBLE_QUOTED_STRING, "\"123 123 12   \"")
+                new Token(Token.TokenType.SINGLE_QUOTED_STRING, "12 3"),
+                new Token(Token.TokenType.DOUBLE_QUOTED_STRING, "123 123 12   ")
         };
 
         final String sample2 = "FILE=example.txt|echo $FILE   \" $FILE \" '$FILE'";
@@ -39,11 +43,11 @@ public class TokenizerTest {
                 new Token(Token.TokenType.PIPE, "|"),
                 new Token(Token.TokenType.COMMAND, "echo"),
                 new Token(Token.TokenType.WORD, "$FILE"),
-                new Token(Token.TokenType.DOUBLE_QUOTED_STRING, "\" $FILE \""),
-                new Token(Token.TokenType.SINGLE_QUOTED_STRING, "'$FILE'")
+                new Token(Token.TokenType.DOUBLE_QUOTED_STRING, " $FILE "),
+                new Token(Token.TokenType.SINGLE_QUOTED_STRING, "$FILE")
         };
 
-        final String sample3 = "X=\"123\"|echo 1|Y='123'";
+        final String sample3 = "    X=\"123\"|echo 1  |  Y='123'";
         final Token[] answer3 = {
                 new Token(Token.TokenType.ASSIGNMENT, "X=\"123\""),
                 new Token(Token.TokenType.PIPE, "|"),

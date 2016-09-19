@@ -1,3 +1,5 @@
+package ru.spbau.mit.parsing;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -66,7 +68,7 @@ public final class Tokenizer {
         }
 
         final Token.TokenType tokenType = getTokenType();
-        final String content = getTokenContent();
+        final String content = getTokenContent(tokenType);
 
         isExpectingCommand = tokenType == Token.TokenType.PIPE;
 
@@ -147,8 +149,14 @@ public final class Tokenizer {
     }
 
     @NotNull
-    private String getTokenContent() {
-        return line.substring(lastPosition, currentPosition);
+    private String getTokenContent(Token.TokenType tokenType) {
+        switch (tokenType) {
+            case DOUBLE_QUOTED_STRING:
+            case SINGLE_QUOTED_STRING:
+                return line.substring(lastPosition + 1, currentPosition - 1);
+            default:
+                return line.substring(lastPosition, currentPosition);
+        }
     }
 
 }

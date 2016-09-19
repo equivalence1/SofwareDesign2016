@@ -1,3 +1,5 @@
+package ru.spbau.mit.parsing;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,8 +12,7 @@ public final class Token {
 
     public static final String VARIABLE_PATTERN = "[a-zA-Z](\\w*)";
 
-    @NotNull
-    private final TokenType type;
+    @NotNull private final TokenType type;
     @NotNull private String content;
 
     public Token(@NotNull TokenType type, @NotNull String content) {
@@ -19,11 +20,6 @@ public final class Token {
         this.content = content.trim();
 
         checkContent();
-        if (type == TokenType.DOUBLE_QUOTED_STRING
-                || type == TokenType.SINGLE_QUOTED_STRING) {
-            // remove quotes
-            this.content = this.content.substring(1, this.content.length() - 1);
-        }
     }
 
     @NotNull
@@ -41,10 +37,10 @@ public final class Token {
     }
 
     /**
-     * @return token's content representation ready for printing
+     * @return content as it was in user input
      */
     @NotNull
-    public String printToken() {
+    public String getContentWithSurrounding() {
         switch (type) {
             case DOUBLE_QUOTED_STRING:
                 return "\"" + content + "\"";
@@ -57,7 +53,7 @@ public final class Token {
 
     private void checkContent() {
         if (type == TokenType.PIPE && !content.equals("|")) {
-            throw new IllegalArgumentException("Pipe should be only symbol `|`, not `" + content + "`");
+            throw new IllegalArgumentException("ru.spbau.mit.Pipe should be only symbol `|`, not `" + content + "`");
         }
 
         if (((type == TokenType.COMMAND) || (type == TokenType.WORD))
