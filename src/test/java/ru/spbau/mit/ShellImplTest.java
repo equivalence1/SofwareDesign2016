@@ -8,6 +8,7 @@ import org.junit.rules.Timeout;
 import ru.spbau.mit.commands.CommandFactory;
 import ru.spbau.mit.parsing.Token;
 
+import java.io.ByteArrayOutputStream;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
@@ -65,8 +66,12 @@ public class ShellImplTest {
 
     @Test
     public void testEvaluate() {
-        final String sample1 = "echo \"123\" 123 | cat";
+        final String sample1 = "pwd | echo";
         final String answer1 = "123 123";
+
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        //final Shell
     }
 
 }

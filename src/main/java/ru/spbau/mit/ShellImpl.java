@@ -129,7 +129,7 @@ public final class ShellImpl implements Shell {
      * @param line shell command to be processed
      */
     void processLine(@NotNull String line) throws EvaluationException, InvocationTargetException {
-        line = parseLine(line); // tokenize first time and substitute variables
+        line = parseLine(line); // tokenizeCommands first time and substitute variables
         evaluate(line);
     }
 
@@ -141,7 +141,7 @@ public final class ShellImpl implements Shell {
     @NotNull
     String parseLine(@NotNull String line) {
         final Tokenizer tokenizer = new Tokenizer(line);
-        final Token[] tokens = tokenizer.tokenize();
+        final Token[] tokens = tokenizer.tokenizeCommands();
 
         for (Token token : tokens) {
             switch (token.getTokenType()) {
@@ -214,13 +214,13 @@ public final class ShellImpl implements Shell {
           > echo $Y
           should be `123`
           I don't want to write one more parser only for this cases,
-          so I just tokenize string `"echo " + rawValue`, take
+          so I just tokenizeCommands string `"echo " + rawValue`, take
           second token (which should be an appropriate token for `rawValue`) and use already written function
           `substituteVariables` on it.
          */
 
         final Tokenizer tokenizer = new Tokenizer("echo " + rawValue);
-        final Token tokenValue = tokenizer.tokenize()[1];
+        final Token tokenValue = tokenizer.tokenizeCommands()[1];
         substituteVariables(tokenValue);
 
         setVariable(variableName, tokenValue.getContent());
@@ -233,7 +233,7 @@ public final class ShellImpl implements Shell {
      */
     private void evaluate(@NotNull String line) throws EvaluationException {
         final Tokenizer tokenizer = new Tokenizer(line);
-        final Token[] tokens = tokenizer.tokenize();
+        final Token[] tokens = tokenizer.tokenizeCommands();
 
         int currentPos = 0;
         int res = 0;
@@ -249,8 +249,8 @@ public final class ShellImpl implements Shell {
 
                 final StringBuilder args = new StringBuilder();
                 int pos = currentPos + 1;
-                while (pos < tokens.length && isArgument(tokens[currentPos])) {
-                    args.append(tokens[currentPos].getContentWithSurrounding());
+                while (pos < tokens.length && isArgument(tokens[pos])) {
+                    args.append(tokens[pos].getContentWithSurrounding());
                     args.append(" ");
                     pos++;
                 }

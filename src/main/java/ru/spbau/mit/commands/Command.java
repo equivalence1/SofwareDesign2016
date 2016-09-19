@@ -40,7 +40,7 @@ public abstract class Command {
      */
     public int execute(@NotNull String args) {
         final Tokenizer tokenizer = new Tokenizer(args);
-        return execute(tokenizer.tokenize());
+        return execute(tokenizer.tokenizeArgs());
     }
 
     /**

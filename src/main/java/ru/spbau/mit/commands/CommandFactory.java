@@ -55,7 +55,7 @@ public enum CommandFactory implements AbstractCommandFactory {
     private Command createInstance(@NotNull Shell shell, @NotNull Class<? extends Command> commandClass,
                                    @NotNull OutputStream out) throws InvocationTargetException {
         try {
-            return commandClass.getConstructor().newInstance(shell, out);
+            return commandClass.getConstructor(Shell.class, OutputStream.class).newInstance(shell, out);
         } catch (NoSuchMethodException|InstantiationException|IllegalAccessException e) {
             /**
              * this is impossible. We do all this checks in {@link registeredCommands}

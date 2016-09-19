@@ -23,7 +23,6 @@ public final class Tokenizer {
     public Tokenizer(@NotNull String line) {
         this.line = line.trim() + " "; // we add space only because its easier to not to think about end of line
         lastPosition = 0;
-        isExpectingCommand = true;
     }
 
     /**
@@ -32,7 +31,23 @@ public final class Tokenizer {
      * @throws IllegalArgumentException if we could not parse given line
      */
     @NotNull
-    public Token[] tokenize() throws IllegalArgumentException {
+    public Token[] tokenizeCommands() throws IllegalArgumentException {
+        isExpectingCommand = true;
+        return tokenize();
+    }
+
+    /**
+     * tokenize arguments for a command,
+     * @return array ot tokens
+     * @throws IllegalArgumentException if we could not parse given line
+     */
+    @NotNull
+    public Token[] tokenizeArgs() throws IllegalArgumentException {
+        isExpectingCommand = false;
+        return tokenize();
+    }
+
+    private Token[] tokenize() throws IllegalArgumentException {
         if (line.trim().isEmpty()) {
             return new Token[0];
         }

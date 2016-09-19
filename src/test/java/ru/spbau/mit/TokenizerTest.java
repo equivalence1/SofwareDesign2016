@@ -70,7 +70,7 @@ public class TokenizerTest {
     public void testTokenize() {
         for (String sample : samples.keySet()) {
             Tokenizer tokenizer = new Tokenizer(sample);
-            Token[] tokensActual = tokenizer.tokenize();
+            Token[] tokensActual = tokenizer.tokenizeCommands();
             Token[] tokensExpected = samples.get(sample);
             checkEqual(tokensExpected, tokensActual);
         }

@@ -5,6 +5,7 @@ import ru.spbau.mit.Shell;
 import ru.spbau.mit.parsing.Token;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,11 @@ public final class PwdCommand extends Command {
      */
     public PwdCommand(@NotNull Shell shell, @NotNull OutputStream out) {
         super(shell, out);
+    }
+
+    @Override
+    public int execute(@NotNull InputStream in) {
+        return execute(new Token[0]);
     }
 
     @Override
