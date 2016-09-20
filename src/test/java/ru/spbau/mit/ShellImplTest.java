@@ -9,6 +9,11 @@ import ru.spbau.mit.commands.CommandFactory;
 import ru.spbau.mit.parsing.Token;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
@@ -65,13 +70,42 @@ public class ShellImplTest {
     }
 
     @Test
-    public void testEvaluate() {
-        final String sample1 = "x=123 | echo \"$x\" 'something' /proc/cpuinfo | cat";
-        final String answer1 = "123 something /proc/cpuinfo";
+    public void testProcessLineSimple() {
+        final String sample1 = "x=123 | echo \"$x\" '$x' $x 'something' /proc/cpuinfo | cat";
+        final String answer1 = "123 $x 123 something /proc/cpuinfo\n";
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ShellImpl shell = new ShellImpl(CommandFactory.INSTANCE, System.in, out);
 
-        //final Shell
+        try {
+            shell.processLine(sample1);
+        } catch (InvocationTargetException e) {
+            // this is impossible
+        }
+
+        assertEquals(answer1, out.toString());
     }
 
+
+    @Test
+    public void testProcessLineHard() throws IOException {
+        final File temp = File.createTempFile("process_sample1_file", ".tmp");
+
+        final String sample1 = "x=\"some 'interesting' text\" | echo \"$x\" | tee " + temp.getAbsolutePath()
+                + " | echo '$x'";
+        final String answer1File = "some 'interesting' text\n";
+        final String answer1Out = "$x\n";
+
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ShellImpl shell = new ShellImpl(CommandFactory.INSTANCE, System.in, out);
+
+        try {
+            shell.processLine(sample1);
+        } catch (InvocationTargetException e) {
+            // this is impossible
+        }
+
+        assertEquals(answer1File, new String(Files.readAllBytes(Paths.get(temp.getAbsolutePath()))));
+        assertEquals(answer1Out, out.toString());
+    }
 }

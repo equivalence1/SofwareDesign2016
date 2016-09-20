@@ -235,7 +235,7 @@ public final class ShellImpl implements Shell {
         int currentPos = 0;
         int res = 0;
 
-        OutputStream outputStream = null;
+        OutputStream outputStream;
         Pipe prevPipe = null;
         Pipe currentPipe = null;
 

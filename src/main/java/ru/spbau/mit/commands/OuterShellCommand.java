@@ -10,6 +10,10 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This is a special kind of commands which
+ * will be executed in a normal shell.
+ */
 public final class OuterShellCommand extends Command {
 
     @NotNull private static final Logger LOGGER = Logger.getLogger(OuterShellCommand.class.getName());

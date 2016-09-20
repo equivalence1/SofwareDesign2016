@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public final class Tokenizer {
 
     @NotNull private final String line;
+
     private int lastPosition;
     private int currentPosition;
 
@@ -96,27 +97,31 @@ public final class Tokenizer {
     }
 
     private void setUpFlags() {
-        isInsideDoubleQuoted = line.charAt(lastPosition) == '"';
-        isInsideSingleQuoted = line.charAt(lastPosition) == '\'';
-        isAssignment         = line.charAt(lastPosition) == '=';
-        isPipe               = line.charAt(lastPosition) == '|';
+        char currentChar = line.charAt(lastPosition);
+
+        isInsideDoubleQuoted = currentChar == '"';
+        isInsideSingleQuoted = currentChar == '\'';
+        isAssignment         = currentChar == '=';
+        isPipe               = currentChar == '|';
         isOmitted            = false;
     }
 
     private void updateFlags() {
-        if (!isInsideSingleQuoted && !isInsideDoubleQuoted && line.charAt(currentPosition) == '=') {
+        char currentChar = line.charAt(currentPosition);
+
+        if (!isInsideSingleQuoted && !isInsideDoubleQuoted && currentChar == '=') {
             isAssignment = true;
         }
         if (!isInsideDoubleQuoted) {
-            isInsideSingleQuoted ^= line.charAt(currentPosition) == '\'';
+            isInsideSingleQuoted ^= currentChar == '\'';
         }
         if (!isInsideSingleQuoted) {
             if (!(isInsideDoubleQuoted && isOmitted)) {
-                isInsideDoubleQuoted ^= line.charAt(currentPosition) == '"';
+                isInsideDoubleQuoted ^= currentChar == '"';
             }
         }
 
-        isOmitted = !isOmitted && line.charAt(currentPosition) == '\\';
+        isOmitted = !isOmitted && currentChar == '\\';
     }
 
     private boolean shouldProceed() {
@@ -163,6 +168,7 @@ public final class Tokenizer {
         return Token.TokenType.WORD;
     }
 
+    //TODO I have problems with omitting characters but I didn't come up with a good solution yet.
     @NotNull
     private String getTokenContent(Token.TokenType tokenType) {
         switch (tokenType) {

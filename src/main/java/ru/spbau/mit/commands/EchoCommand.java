@@ -34,10 +34,15 @@ public final class EchoCommand extends Command {
           Echo command in bash ignores it's input stream
          */
         try {
+            int i = 0;
             for (Token arg : args) {
+                i++;
                 out.write(arg.getContent().getBytes());
-                out.write(" ".getBytes());
+                if (i != args.length) {
+                    out.write(" ".getBytes());
+                }
             }
+            out.write("\n".getBytes()); // that's what bash does
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "could not write to output stream", e);
             return 1;
