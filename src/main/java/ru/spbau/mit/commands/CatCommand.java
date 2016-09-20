@@ -6,6 +6,7 @@ import ru.spbau.mit.parsing.Token;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,10 +31,28 @@ public final class CatCommand extends Command {
 
     /**
      * {@inheritDoc}
-     * @throws IllegalArgumentException if some token is not WORD or STRING
      */
     @Override
-    public int execute(@NotNull Token[] args) throws IllegalArgumentException {
+    public int execute(@NotNull InputStream in, @NotNull Token[] args) {
+        /*
+         echo /path/to/file | cat
+         should produce `/path/to/file`
+         but
+         cat /path/to/file
+         should produce file's content
+
+         So if args[] does have any tokens, than ignore `in`.
+         Print content of `in` else.
+         */
+
+        if (args.length > 0) {
+            return execute(args);
+        } else {
+            return execute(in);
+        }
+    }
+
+    private int execute(@NotNull Token[] args) {
         for (Token arg : args) {
             int res;
             switch (arg.getTokenType()) {
@@ -43,11 +62,27 @@ public final class CatCommand extends Command {
                     res = writeFile(arg.getContent());
                     break;
                 default:
-                    throw new IllegalArgumentException("argument should be WORD|STRING");
+                    LOGGER.log(Level.WARNING, "argument should be WORD|STRING");
+                    return 1;
             }
             if (res != 0) {
                 return res;
             }
+        }
+
+        return 0;
+    }
+
+    private int execute(@NotNull InputStream in) {
+        try {
+            int bytesRead;
+            byte[] buffer = new byte[1024];
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Error while executing", e);
+            return 1;
         }
 
         return 0;

@@ -1,11 +1,7 @@
 package ru.spbau.mit;
 
-import com.sun.tools.corba.se.idl.constExpr.EvaluationException;
 import org.jetbrains.annotations.NotNull;
-import ru.spbau.mit.commands.AbstractCommandFactory;
-import ru.spbau.mit.commands.CatCommand;
-import ru.spbau.mit.commands.Command;
-import ru.spbau.mit.commands.PwdCommand;
+import ru.spbau.mit.commands.*;
 import ru.spbau.mit.parsing.Token;
 import ru.spbau.mit.parsing.Tokenizer;
 
@@ -101,6 +97,7 @@ public final class ShellImpl implements Shell {
          */
         commandFactory.registerCommand(CatCommand.class);
         commandFactory.registerCommand(PwdCommand.class);
+        commandFactory.registerCommand(EchoCommand.class);
     }
 
     /**
@@ -128,7 +125,7 @@ public final class ShellImpl implements Shell {
      * package-private only for testing
      * @param line shell command to be processed
      */
-    void processLine(@NotNull String line) throws EvaluationException, InvocationTargetException {
+    void processLine(@NotNull String line) throws RuntimeException, InvocationTargetException {
         line = parseLine(line); // tokenizeCommands first time and substitute variables
         evaluate(line);
     }
@@ -231,7 +228,7 @@ public final class ShellImpl implements Shell {
      * evaluates the line after `parseLine`.
      * @param line user's line after "tokenization" and substitution (which are `parseLine` method)
      */
-    private void evaluate(@NotNull String line) throws EvaluationException {
+    private void evaluate(@NotNull String line) throws RuntimeException {
         final Tokenizer tokenizer = new Tokenizer(line);
         final Token[] tokens = tokenizer.tokenizeCommands();
 
@@ -257,7 +254,7 @@ public final class ShellImpl implements Shell {
 
                 if (pos != tokens.length && tokens[pos].getTokenType() != Token.TokenType.PIPE) {
                     /* After command's args we met something different than pipe. */
-                    throw new EvaluationException("Could not evaluate line. Expected pipe or EOF after command.");
+                    throw new RuntimeException("Could not evaluate line. Expected pipe or EOF after command.");
                 }
 
                 if (pos == tokens.length) {
@@ -269,23 +266,13 @@ public final class ShellImpl implements Shell {
                     outputStream = currentPipe.getPipeInput();
                 }
 
-                if (pos == currentPos + 1) {
-                    /* no arguments were written for this command. */
-                    if (prevPipe != null) {
-                        /* pipe were before, so just take args from it */
-                        res = executeCommand(commandName, prevPipe.getPipeOutput(), outputStream);
-                    } else {
-                        /* no arguments and no pipe before, pass to command stdin */
-                        /*
-                            TODO it is better to ALWAYS pass command stdin, as it may want to read something from it
-                            even if we provided some arguments explicitly.
-                         */
-                        res = executeCommand(commandName, stdin, outputStream);
-                    }
+                final InputStream in;
+                if (prevPipe != null) {
+                    in = prevPipe.getPipeOutput();
                 } else {
-                    /* command has some arguments, so we just pass them */
-                    res = executeCommand(commandName, args.toString(), outputStream);
+                    in = stdin;
                 }
+                res = executeCommand(commandName, in, args.toString(), outputStream);
 
                 currentPos = pos;
             }
@@ -300,25 +287,11 @@ public final class ShellImpl implements Shell {
         }
     }
 
-    private int executeCommand(String commandName, InputStream in, OutputStream out) {
+    private int executeCommand(String commandName, InputStream in, String args, OutputStream out) {
         final Command command;
         try {
             command = commandFactory.getCommand(this, commandName, out);
-            return command.execute(in);
-        } catch (InvocationTargetException e) {
-            LOGGER.log(Level.WARNING, "could not execute command `" + commandName + "`", e.getTargetException());
-            return 1;
-        } catch (NullPointerException e) {
-            LOGGER.log(Level.WARNING, "No command `" + commandName + "` found");
-            return 1;
-        }
-    }
-
-    private int executeCommand(String commandName, String args, OutputStream out) {
-        final Command command;
-        try {
-            command = commandFactory.getCommand(this, commandName, out);
-            return command.execute(args);
+            return command.execute(in, args);
         } catch (InvocationTargetException e) {
             LOGGER.log(Level.WARNING, "could not execute command `" + commandName + "`", e.getTargetException());
             return 1;

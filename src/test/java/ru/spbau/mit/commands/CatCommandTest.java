@@ -29,7 +29,7 @@ public class CatCommandTest {
         final Shell shell = new ShellImpl(CommandFactory.INSTANCE, System.in, System.out);
         CatCommand catCommand = new CatCommand(shell, out);
 
-        assertEquals(0, catCommand.execute(new Token[] {
+        assertEquals(0, catCommand.execute(System.in, new Token[] {
                 new Token(Token.TokenType.WORD, temp.getAbsolutePath()),
                 new Token(Token.TokenType.DOUBLE_QUOTED_STRING, temp.getAbsolutePath()),
                 new Token(Token.TokenType.SINGLE_QUOTED_STRING, temp.getAbsolutePath())

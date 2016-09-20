@@ -19,7 +19,7 @@ public class PwdCommandTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         final PwdCommand pwd = new PwdCommand(shell, out);
 
-        assertEquals(0, pwd.execute(""));
+        assertEquals(0, pwd.execute(System.in, ""));
         assertEquals(location.getPath(), out.toString());
     }
 

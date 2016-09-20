@@ -66,8 +66,8 @@ public class ShellImplTest {
 
     @Test
     public void testEvaluate() {
-        final String sample1 = "pwd | echo";
-        final String answer1 = "123 123";
+        final String sample1 = "x=123 | echo \"$x\" 'something' /proc/cpuinfo | cat";
+        final String answer1 = "123 something /proc/cpuinfo";
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 

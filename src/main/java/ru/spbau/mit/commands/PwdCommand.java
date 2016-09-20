@@ -26,12 +26,7 @@ public final class PwdCommand extends Command {
     }
 
     @Override
-    public int execute(@NotNull InputStream in) {
-        return execute(new Token[0]);
-    }
-
-    @Override
-    public int execute(@NotNull Token[] args)  {
+    public int execute(@NotNull InputStream in, @NotNull Token[] args)  {
         try {
             out.write(shell.pwd().getBytes());
         } catch (IOException e) {
