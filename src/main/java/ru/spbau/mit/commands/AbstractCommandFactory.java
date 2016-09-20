@@ -1,7 +1,6 @@
 package ru.spbau.mit.commands;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.spbau.mit.Shell;
 
 import java.io.OutputStream;
@@ -18,18 +17,17 @@ public interface AbstractCommandFactory {
      * @param name name of command
      * @param out output stream for this command
      * @return command to be executed
-     * @throws IllegalArgumentException if your name does not comply to any known command
      * @throws InvocationTargetException if command's constructor throws any exception
      */
-    @Nullable
+    @NotNull
     Command getCommand(@NotNull Shell shell, @NotNull String name, @NotNull OutputStream out)
-            throws IllegalArgumentException, InvocationTargetException;
+            throws InvocationTargetException;
 
     /**
      *
      * @param clazz class you want to register
      * @return whether your command
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if your command does not comply our requirements
      */
     boolean registerCommand(@NotNull Class<? extends Command> clazz) throws IllegalArgumentException;
 

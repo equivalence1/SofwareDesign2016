@@ -7,7 +7,6 @@ import ru.spbau.mit.parsing.Tokenizer;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Logger;
 
 /**
  * Each new shell command must extend this class.
@@ -19,17 +18,16 @@ import java.util.logging.Logger;
  */
 public abstract class Command {
 
-    @NotNull private static final Logger LOGGER = Logger.getLogger(Command.class.getName());
-
     @NotNull protected final Shell shell;
     @NotNull protected final OutputStream out;
 
     /**
-     * Constructs command
+     * Constructs command.
+     * package-private to enforce user store all commands in this package.
      * @param shell current shell
      * @param out output stream for a command
      */
-    public Command(@NotNull Shell shell, @NotNull OutputStream out) {
+    Command(@NotNull Shell shell, @NotNull OutputStream out) {
         this.shell = shell;
         this.out = out;
     }

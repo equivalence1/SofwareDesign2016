@@ -24,14 +24,19 @@ public enum CommandFactory implements AbstractCommandFactory {
      * {@inheritDoc}
      */
     @Override
-    @Nullable
+    @NotNull
     public Command getCommand(@NotNull Shell shell, @NotNull String name, @NotNull OutputStream out)
-            throws IllegalArgumentException, InvocationTargetException {
+            throws InvocationTargetException {
+        Command command = null;
         if (registeredCommands.containsKey(name)) {
-            return createInstance(shell, registeredCommands.get(name), out);
+            command = createInstance(shell, registeredCommands.get(name), out);
         }
 
-        throw new IllegalArgumentException("unknown command '" + name + "'.");
+        if (command != null) {
+            return command;
+        } else {
+            return new OuterShellCommand(name, shell, out);
+        }
     }
 
     /**
@@ -57,11 +62,8 @@ public enum CommandFactory implements AbstractCommandFactory {
         try {
             return commandClass.getConstructor(Shell.class, OutputStream.class).newInstance(shell, out);
         } catch (NoSuchMethodException|InstantiationException|IllegalAccessException e) {
-            /**
-             * this is impossible. We do all this checks in {@link registeredCommands}
-             */
+            return null;
         }
-        return null; // this is also impossible
     }
 
     private boolean hasCommandAnnotation(@NotNull Class<? extends Command> clazz) {
