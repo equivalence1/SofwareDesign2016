@@ -59,7 +59,7 @@ public final class CatCommand extends Command {
                 case WORD:
                 case DOUBLE_QUOTED_STRING:
                 case SINGLE_QUOTED_STRING:
-                    res = writeFile(arg.getContent());
+                    res = readFile(arg.getContent());
                     break;
                 default:
                     LOGGER.log(Level.WARNING, "argument should be WORD|STRING");
@@ -93,7 +93,7 @@ public final class CatCommand extends Command {
      * @param fileName name of file
      * @return exit code
      */
-    private int writeFile(@NotNull String fileName) {
+    private int readFile(@NotNull String fileName) {
         final String filePath;
         if (fileName.length() > 0 && fileName.charAt(0) == '/') {
             filePath = fileName;
@@ -117,7 +117,7 @@ public final class CatCommand extends Command {
             byte[] data = Files.readAllBytes(path);
             out.write(data);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "error while reading file `" + filePath + "`.", e);
+            LOGGER.log(Level.WARNING, "error while handling file `" + filePath + "`.", e);
             return 1;
         }
 

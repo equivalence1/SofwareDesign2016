@@ -21,6 +21,12 @@ import java.util.regex.Pattern;
 
 /**
  * Our shell.
+ * You should it with CommandFactory instance, stdin and stdout.
+ *
+ * If you wish to add some new commands, you should implement it in
+ * `commands` package (please, see already existing for examples)
+ * and then you should register it in factory inside
+ * {@link ShellImpl#registerShellCommands} method.
  */
 public final class ShellImpl implements Shell {
 
@@ -98,6 +104,7 @@ public final class ShellImpl implements Shell {
         commandFactory.registerCommand(CatCommand.class);
         commandFactory.registerCommand(PwdCommand.class);
         commandFactory.registerCommand(EchoCommand.class);
+        commandFactory.registerCommand(WcCommand.class);
     }
 
     /**

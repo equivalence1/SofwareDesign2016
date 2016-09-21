@@ -17,7 +17,7 @@ public final class Token {
 
     public Token(@NotNull TokenType type, @NotNull String content) {
         this.type = type;
-        this.content = content.trim();
+        this.content = content;
 
         checkContent();
     }
