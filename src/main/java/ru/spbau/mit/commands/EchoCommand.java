@@ -26,13 +26,13 @@ public final class EchoCommand extends Command {
     }
 
     /**
-     * {@inheritDoc}
+     * Writes it's input.
+     * Echo command in bash always just ignores it's input stream.
+     * @param in ignored
+     * @param args `echo`'s arguments
      */
     @Override
     public int execute(@NotNull InputStream in, @NotNull Token[]args) {
-        /*
-          Echo command in bash ignores it's input stream
-         */
         try {
             int i = 0;
             for (Token arg : args) {

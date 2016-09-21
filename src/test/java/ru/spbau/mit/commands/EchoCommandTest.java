@@ -8,7 +8,7 @@ import java.io.ByteArrayOutputStream;
 
 import static org.junit.Assert.assertEquals;
 
-public class EchoCommandTest {
+public final class EchoCommandTest {
 
     @Test
     public void testEcho() {

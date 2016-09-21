@@ -10,12 +10,7 @@ import java.io.ByteArrayOutputStream;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by equi on 20.09.16.
- *
- * @author Kravchenko Dima
- */
-public class OuterShellCommandTest {
+public final class OuterShellCommandTest {
 
     private Shell shell;
 

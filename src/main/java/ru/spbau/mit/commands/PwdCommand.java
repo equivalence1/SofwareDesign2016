@@ -25,6 +25,12 @@ public final class PwdCommand extends Command {
         super(shell, out);
     }
 
+    /**
+     *
+     * @param in ignored
+     * @param args ignored
+     * @return
+     */
     @Override
     public int execute(@NotNull InputStream in, @NotNull Token[] args)  {
         try {

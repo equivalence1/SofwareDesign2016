@@ -25,6 +25,12 @@ public final class OuterShellCommand extends Command {
         this.name = name;
     }
 
+    /**
+     * execute command in outer shell.
+     * @param in will be connected with outer command's input
+     * @param args command arguments
+     * @return if nothing failed, exit code of outer command, 1 else
+     */
     @Override
     public int execute(@NotNull InputStream in, @NotNull Token[] args) {
         final String[] processArgs = new String[args.length + 1];

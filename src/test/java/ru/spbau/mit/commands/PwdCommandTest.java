@@ -9,7 +9,7 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-public class PwdCommandTest {
+public final class PwdCommandTest {
 
     @Test
     public void testPwd() {

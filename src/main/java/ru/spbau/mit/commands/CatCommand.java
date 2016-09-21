@@ -30,7 +30,9 @@ public final class CatCommand extends Command {
     }
 
     /**
-     * {@inheritDoc}
+     * execute <code>cat</code> command
+     * @param in if args are empty, cat will take it's input from here
+     * @param args are considered as files' names
      */
     @Override
     public int execute(@NotNull InputStream in, @NotNull Token[] args) {

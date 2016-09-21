@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 
-public class TokenizerTest {
+public final class TokenizerTest {
 
     private static Map<String, Token[]> samples;
 

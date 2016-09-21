@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class CatCommandTest {
+public final class CatCommandTest {
 
     @Test
     public void testExecuteWithFile() throws IOException {

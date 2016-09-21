@@ -2,7 +2,7 @@ package ru.spbau.mit;
 
 import ru.spbau.mit.commands.CommandFactory;
 
-public class Main {
+public final class Main {
 
     public static void main(String[] args) {
         ShellImpl shell = new ShellImpl(CommandFactory.INSTANCE,

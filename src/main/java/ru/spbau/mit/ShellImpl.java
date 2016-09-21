@@ -2,6 +2,7 @@ package ru.spbau.mit;
 
 import org.jetbrains.annotations.NotNull;
 import ru.spbau.mit.commands.*;
+import ru.spbau.mit.errors.ExitException;
 import ru.spbau.mit.parsing.Token;
 import ru.spbau.mit.parsing.Tokenizer;
 
@@ -105,6 +106,7 @@ public final class ShellImpl implements Shell {
         commandFactory.registerCommand(PwdCommand.class);
         commandFactory.registerCommand(EchoCommand.class);
         commandFactory.registerCommand(WcCommand.class);
+        commandFactory.registerCommand(ExitCommand.class);
     }
 
     /**
@@ -118,6 +120,9 @@ public final class ShellImpl implements Shell {
             try {
                 line = scanner.nextLine();
                 processLine(line);
+            } catch (ExitException e) {
+                stdout.write("Goodbye".getBytes());
+                break;
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "could not process line '" + line + "'.", e);
             }

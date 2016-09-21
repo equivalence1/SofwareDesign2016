@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream;
  * that give pipe's output ({@link Pipe#getPipeOutput}) as the arguments
  * to <code>cat</code> command (you probably should convert it to string)
  */
-public class Pipe {
+public final class Pipe {
 
     @NotNull private final ByteArrayOutputStream outputStream;
 

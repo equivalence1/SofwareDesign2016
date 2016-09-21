@@ -8,7 +8,7 @@ import java.io.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class WcCommandTest {
+public final class WcCommandTest {
 
     @Test
     public void testWcStream() {

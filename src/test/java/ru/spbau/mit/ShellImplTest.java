@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 
-public class ShellImplTest {
+public final class ShellImplTest {
 
     private ShellImpl shell;
 

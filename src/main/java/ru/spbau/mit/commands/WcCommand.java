@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * <code>wc</code> command
  */
 @CommandAnnotation(commandName = "wc")
-public class WcCommand extends Command {
+public final class WcCommand extends Command {
 
     @NotNull private static final Logger LOGGER = Logger.getLogger(WcCommand.class.getName());
 
