@@ -17,7 +17,7 @@ public final class WcCommandTest {
         final WcCommand wc = new WcCommand(shell, out);
 
         final String sample = "bla\n bla   blabla\n\nbla ";
-        final String answer = "4 4 " + sample.getBytes().length + " total\n";
+        final String answer = "4 4 " + sample.getBytes().length + " total";
         final ByteArrayInputStream in = new ByteArrayInputStream(sample.getBytes());
 
         assertEquals(0, wc.execute(in, ""));
@@ -40,7 +40,7 @@ public final class WcCommandTest {
         final WcCommand wc = new WcCommand(shell, out);
 
         final String answer = "5 5 " + content1.getBytes().length + " " + temp1.getAbsolutePath() + "\n" +
-                "0 0 0 " + temp2.getAbsolutePath() + "\n5 5 " + content1.getBytes().length + " total\n";
+                "0 0 0 " + temp2.getAbsolutePath() + "\n5 5 " + content1.getBytes().length + " total";
 
         assertEquals(0, wc.execute(System.in, temp1.getAbsolutePath() +  " " + temp2.getAbsolutePath()));
         assertEquals(answer, out.toString());

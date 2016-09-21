@@ -6,10 +6,7 @@ import ru.spbau.mit.errors.ExitException;
 import ru.spbau.mit.parsing.Token;
 import ru.spbau.mit.parsing.Tokenizer;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,7 +47,8 @@ public final class ShellImpl implements Shell {
 
         registerShellCommands();
 
-        currentDirectory = "~";
+        final File currentDir = new File(".");
+        currentDirectory = currentDir.getAbsolutePath();
         environment = new HashMap<>();
     }
 
@@ -120,6 +118,7 @@ public final class ShellImpl implements Shell {
             try {
                 line = scanner.nextLine();
                 processLine(line);
+                stdout.write("\n".getBytes());
             } catch (ExitException e) {
                 stdout.write("Goodbye".getBytes());
                 break;
@@ -247,6 +246,8 @@ public final class ShellImpl implements Shell {
         int currentPos = 0;
         int res = 0;
 
+        final ByteArrayInputStream initIn = new ByteArrayInputStream("".getBytes());
+
         OutputStream outputStream;
         Pipe prevPipe = null;
         Pipe currentPipe = null;
@@ -282,7 +283,7 @@ public final class ShellImpl implements Shell {
                 if (prevPipe != null) {
                     in = prevPipe.getPipeOutput();
                 } else {
-                    in = stdin;
+                    in = initIn;
                 }
                 res = executeCommand(commandName, in, args.toString(), outputStream);
 
@@ -307,9 +308,6 @@ public final class ShellImpl implements Shell {
             return command.execute(in, args);
         } catch (InvocationTargetException e) {
             LOGGER.log(Level.WARNING, "could not execute command `" + commandName + "`", e.getTargetException());
-            return 1;
-        } catch (NullPointerException e) {
-            LOGGER.log(Level.WARNING, "No command `" + commandName + "` found");
             return 1;
         }
     }

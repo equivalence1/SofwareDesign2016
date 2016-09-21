@@ -178,7 +178,7 @@ public final class WcCommand extends Command {
 
     @NotNull
     private String getTotalResults() {
-        return totalLinesCount + " " + totalWordsCount + " " + totalBytesCount + " total\n";
+        return totalLinesCount + " " + totalWordsCount + " " + totalBytesCount + " total";
     }
 
 }

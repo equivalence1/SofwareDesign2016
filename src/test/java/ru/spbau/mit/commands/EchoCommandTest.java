@@ -17,7 +17,7 @@ public final class EchoCommandTest {
         final EchoCommand echo = new EchoCommand(shell, out);
 
         final String command1 = "echo 123 ' 123' \"1 2 3\"";
-        final String answer1 = "echo 123  123 1 2 3\n";
+        final String answer1 = "echo 123  123 1 2 3";
 
         assertEquals(0, echo.execute(System.in, command1));
         assertEquals(answer1, out.toString());

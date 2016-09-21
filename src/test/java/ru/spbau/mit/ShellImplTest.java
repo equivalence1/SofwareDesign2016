@@ -70,7 +70,7 @@ public final class ShellImplTest {
     @Test
     public void testProcessLineSimple() {
         final String sample1 = "x=123 | echo \"$x\" '$x' $x 'something' /proc/cpuinfo | cat";
-        final String answer1 = "123 $x 123 something /proc/cpuinfo\n";
+        final String answer1 = "123 $x 123 something /proc/cpuinfo";
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ShellImpl shell = new ShellImpl(CommandFactory.INSTANCE, System.in, out);
@@ -91,8 +91,8 @@ public final class ShellImplTest {
 
         final String sample1 = "x=\"some 'interesting' text\" | echo \"$x\" | tee " + temp.getAbsolutePath()
                 + " | echo '$x'";
-        final String answer1File = "some 'interesting' text\n";
-        final String answer1Out = "$x\n";
+        final String answer1File = "some 'interesting' text";
+        final String answer1Out = "$x";
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ShellImpl shell = new ShellImpl(CommandFactory.INSTANCE, System.in, out);
@@ -119,7 +119,7 @@ public final class ShellImplTest {
         /* just simple sample from slides */
         final String sample = "echo \"Hello, World!\"\nFILE=" + temp.getAbsolutePath()
                 + "\ncat $FILE\ncat " + temp.getAbsolutePath() + " | wc\nexit";
-        final String answer = "Hello, World!\nSome example text\n1 3 18 total\nGoodbye";
+        final String answer = "Hello, World!\n\nSome example text\n\n1 3 18 total\nGoodbye";
 
         final ByteArrayInputStream in = new ByteArrayInputStream(sample.getBytes());
         final ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -104,8 +104,13 @@ public final class CatCommand extends Command {
         }
         final File file = new File(filePath);
 
-        if (!file.exists() || !file.isFile()) {
+        if (!file.exists()) {
             LOGGER.log(Level.WARNING, "file `" + filePath + "` not found.");
+            return 1;
+        }
+
+        if (file.isDirectory()) {
+            LOGGER.log(Level.WARNING, "file `" + filePath + "` is a directory.");
             return 1;
         }
 

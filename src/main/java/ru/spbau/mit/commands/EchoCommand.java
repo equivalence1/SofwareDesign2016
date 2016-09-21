@@ -42,7 +42,6 @@ public final class EchoCommand extends Command {
                     out.write(" ".getBytes());
                 }
             }
-            out.write("\n".getBytes()); // that's what bash does
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "could not write to output stream", e);
             return 1;
