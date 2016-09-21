@@ -286,6 +286,9 @@ public final class ShellImpl implements Shell {
                 }
                 res = executeCommand(commandName, in, args.toString(), outputStream);
 
+                prevPipe = currentPipe;
+                currentPipe = null;
+
                 currentPos = pos;
             }
 
@@ -293,8 +296,6 @@ public final class ShellImpl implements Shell {
                 return;
             }
 
-            prevPipe = currentPipe;
-            currentPipe = null;
             currentPos++; // skip pipe
         }
     }

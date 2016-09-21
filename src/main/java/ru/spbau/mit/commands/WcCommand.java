@@ -126,8 +126,8 @@ public final class WcCommand extends Command {
             lastByte = ' ';
             handleBytes(data, data.length);
 
-            String fileResult = currentBytesCount + " " + currentWordsCount + " "
-                    + currentLinesCount + " " + fileName + "\n";
+            String fileResult = currentLinesCount + " " + currentWordsCount + " "
+                    + currentBytesCount + " " + fileName + "\n";
 
             out.write(fileResult.getBytes());
         } catch (IOException e) {
@@ -178,7 +178,7 @@ public final class WcCommand extends Command {
 
     @NotNull
     private String getTotalResults() {
-        return totalBytesCount + " " + totalWordsCount + " " + totalLinesCount + " total\n";
+        return totalLinesCount + " " + totalWordsCount + " " + totalBytesCount + " total\n";
     }
 
 }

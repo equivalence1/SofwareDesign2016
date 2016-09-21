@@ -8,9 +8,7 @@ import org.junit.rules.Timeout;
 import ru.spbau.mit.commands.CommandFactory;
 import ru.spbau.mit.parsing.Token;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -108,4 +106,28 @@ public final class ShellImplTest {
         assertEquals(answer1File, new String(Files.readAllBytes(Paths.get(temp.getAbsolutePath()))));
         assertEquals(answer1Out, out.toString());
     }
+
+    @Test
+    public void testRun() throws IOException {
+        final File temp = File.createTempFile("example", ".txt");
+        final FileOutputStream fileContent = new FileOutputStream(temp);
+
+        final String someText = "Some example text\n";
+        fileContent.write(someText.getBytes());
+        fileContent.close();
+
+        /* just simple sample from slides */
+        final String sample = "echo \"Hello, World!\"\nFILE=" + temp.getAbsolutePath()
+                + "\ncat $FILE\ncat " + temp.getAbsolutePath() + " | wc\nexit";
+        final String answer = "Hello, World!\nSome example text\n1 3 18 total\nGoodbye";
+
+        final ByteArrayInputStream in = new ByteArrayInputStream(sample.getBytes());
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        final Shell shell = new ShellImpl(CommandFactory.INSTANCE, in, out);
+        shell.run();
+
+        assertEquals(answer, out.toString());
+    }
+
 }
