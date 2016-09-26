@@ -22,11 +22,19 @@ public final class Token {
         checkContent();
     }
 
+    /**
+     * get type of this token
+     * @return Token's type
+     */
     @NotNull
     public TokenType getTokenType() {
         return type;
     }
 
+    /**
+     * get content of this token
+     * @return Token's content
+     */
     @NotNull
     public String getContent() {
         return content;
