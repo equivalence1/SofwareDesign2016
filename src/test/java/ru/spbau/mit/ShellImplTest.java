@@ -68,18 +68,14 @@ public final class ShellImplTest {
     }
 
     @Test
-    public void testProcessLineSimple() {
+    public void testProcessLineSimple() throws InvocationTargetException {
         final String sample1 = "x=123 | echo \"$x\" '$x' $x 'something' /proc/cpuinfo | cat";
         final String answer1 = "123 $x 123 something /proc/cpuinfo";
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ShellImpl shell = new ShellImpl(CommandFactory.INSTANCE, System.in, out);
 
-        try {
-            shell.processLine(sample1);
-        } catch (InvocationTargetException e) {
-            // this is impossible
-        }
+        shell.processLine(sample1);
 
         assertEquals(answer1, out.toString());
     }
@@ -105,6 +101,20 @@ public final class ShellImplTest {
 
         assertEquals(answer1File, new String(Files.readAllBytes(Paths.get(temp.getAbsolutePath()))));
         assertEquals(answer1Out, out.toString());
+    }
+
+    @Test
+    public void testRunSimple() throws IOException {
+        final String sample = "x=echo\n$x 1\n";
+        final String answer = "\n1\n";
+
+        final ByteArrayInputStream in = new ByteArrayInputStream(sample.getBytes());
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        final Shell shell = new ShellImpl(CommandFactory.INSTANCE, in, out);
+        shell.run();
+
+        assertEquals(answer, out.toString());
     }
 
     @Test

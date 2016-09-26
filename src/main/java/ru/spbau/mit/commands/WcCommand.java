@@ -36,6 +36,12 @@ public final class WcCommand extends Command {
         super(shell, out);
     }
 
+    /**
+     * execute <code>wc</code> command.
+     * @param in interprets as normal input stream (only if no args specified)
+     * @param args interprets them as files
+     * @return exit code
+     */
     @Override
     public int execute(@NotNull InputStream in, @NotNull Token[] args) {
         /*

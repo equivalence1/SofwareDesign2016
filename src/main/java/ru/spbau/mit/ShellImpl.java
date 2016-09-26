@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * Our shell.
- * You should it with CommandFactory instance, stdin and stdout.
+ * You should provide it with CommandFactory instance, stdin and stdout.
  *
  * If you wish to add some new commands, you should implement it in
  * `commands` package (please, see already existing for examples)
@@ -155,6 +155,7 @@ public final class ShellImpl implements Shell {
             switch (token.getTokenType()) {
                 case WORD:
                 case DOUBLE_QUOTED_STRING:
+                case COMMAND:
                     substituteVariables(token);
                     break;
                 case ASSIGNMENT:
@@ -177,7 +178,8 @@ public final class ShellImpl implements Shell {
      */
     void substituteVariables(@NotNull Token token) {
         if (token.getTokenType() != Token.TokenType.WORD
-                && token.getTokenType() != Token.TokenType.DOUBLE_QUOTED_STRING) {
+                && token.getTokenType() != Token.TokenType.DOUBLE_QUOTED_STRING
+                && token.getTokenType() != Token.TokenType.COMMAND) {
             return; // no need to substitute anything
         }
 

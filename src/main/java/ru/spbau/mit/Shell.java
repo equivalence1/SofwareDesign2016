@@ -7,11 +7,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Shell {
 
+    /**
+     * The main method of shell which will interpret user's commands
+     */
     void run();
 
+    /**
+     * Get environment variable
+     * @param name name of variable
+     * @return variable's value
+     */
     @NotNull
     String getVariable(@NotNull String name);
 
+    /**
+     * Set environment variable
+     * @param name name of variable
+     * @param value new value of variable
+     */
     void setVariable(@NotNull String name, @NotNull String value);
 
     /**

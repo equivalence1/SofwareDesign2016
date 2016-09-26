@@ -27,7 +27,7 @@ public interface AbstractCommandFactory {
      *
      * @param clazz class you want to register
      * @return whether your command
-     * @throws IllegalArgumentException if your command does not comply our requirements
+     * @throws IllegalArgumentException if your command does not comply with our requirements
      */
     boolean registerCommand(@NotNull Class<? extends Command> clazz) throws IllegalArgumentException;
 
