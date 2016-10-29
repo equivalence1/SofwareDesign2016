@@ -105,6 +105,7 @@ public final class ShellImpl implements Shell {
         commandFactory.registerCommand(EchoCommand.class);
         commandFactory.registerCommand(WcCommand.class);
         commandFactory.registerCommand(ExitCommand.class);
+        commandFactory.registerCommand(GrepCommand.class);
     }
 
     /**
