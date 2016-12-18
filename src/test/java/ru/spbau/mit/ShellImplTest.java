@@ -140,4 +140,36 @@ public final class ShellImplTest {
         assertEquals(answer, out.toString());
     }
 
+    @Test
+    public void testMoreRun() throws IOException {
+        final File temp = File.createTempFile("example", ".txt");
+        final FileOutputStream fileContent = new FileOutputStream(temp);
+
+        final String someText = "text\n\n\ntExt\ntext_\n<text>\n\n\n1text1";
+        fileContent.write(someText.getBytes());
+        fileContent.close();
+
+        /* just simple sample from slides */
+        final String sample = "echo \"Hello, World!\"\nFILE=" + temp.getAbsolutePath()
+                + "\ncat $FILE\ncat " + temp.getAbsolutePath() + " | grep -A 1 -w text\nexit";
+        final String answer = "Hello, World!\n\ntext\n" +
+                "\n" +
+                "\n" +
+                "tExt\n" +
+                "text_\n" +
+                "<text>\n" +
+                "\n" +
+                "\n" +
+                "1text1" +
+                "\ntext\n<text>\n\nGoodbye";
+
+        final ByteArrayInputStream in = new ByteArrayInputStream(sample.getBytes());
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        final Shell shell = new ShellImpl(CommandFactory.INSTANCE, in, out);
+        shell.run();
+
+        assertEquals(answer, out.toString());
+    }
+
 }
