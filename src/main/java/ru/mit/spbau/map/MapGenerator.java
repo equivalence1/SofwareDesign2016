@@ -19,7 +19,7 @@ public final class MapGenerator {
     public LevelMap getMap(@NotNull String level) {
         try {
             final ClassLoader classLoader = getClass().getClassLoader();
-            final File file = new File(classLoader.getResource("lvl_" + level + ".map").getFile();
+            final File file = new File(classLoader.getResource("lvl_" + level + ".map").getFile());
             if (!file.exists()) {
                 throw new IllegalArgumentException("File with level does not exists.");
             }
@@ -29,8 +29,10 @@ public final class MapGenerator {
             if (!file.canRead()) {
                 throw new IllegalArgumentException("Can not read file for level.");
             }
+            return LevelMap.fromFile(file);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "could not find map for level '" + level + "'", e);
+            return null;
         }
     }
 

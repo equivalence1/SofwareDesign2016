@@ -1,6 +1,15 @@
 package ru.mit.spbau.units;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class Position {
+
+    public enum Direction {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
+    }
 
     private int x;
     private int y;
@@ -28,6 +37,28 @@ public final class Position {
 
     public final void setY(int y) {
         this.y = y;
+    }
+
+    public final void moveToDirection(@NotNull Direction d) {
+        switch (d) {
+            case UP:
+                y -= 1;
+                break;
+            case DOWN:
+                y += 1;
+                break;
+            case LEFT:
+                x -= 1;
+                break;
+            case RIGHT:
+                x += 1;
+                break;
+        }
+    }
+
+    @NotNull
+    public Position copy() {
+        return new Position(x, y);
     }
 
 }

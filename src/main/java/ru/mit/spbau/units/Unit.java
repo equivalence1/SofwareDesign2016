@@ -9,14 +9,11 @@ import ru.mit.spbau.map.RelativeMap;
 public abstract class Unit {
 
     @NotNull private final Position pos;
+    @NotNull private final Attributes attributes;
 
-    private final int maxHp;
-    private int currentHp;
-
-    public Unit(@NotNull Position pos, int maxHp) {
+    public Unit(@NotNull Position pos, @NotNull Attributes attributes) {
         this.pos = pos;
-        this.maxHp = maxHp;
-        this.currentHp = maxHp;
+        this.attributes = attributes;
     }
 
     public final Position getPosition() {

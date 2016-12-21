@@ -1,4 +1,4 @@
-package ru.mit.spbau;
+package ru.mit.spbau.game;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +8,6 @@ import ru.mit.spbau.map.RelativeMap;
 import ru.mit.spbau.units.Player;
 import ru.mit.spbau.units.Unit;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -39,6 +38,10 @@ public final class Game {
      * stops this game
      */
     public void stop() {
+
+    }
+
+    public void doOneMove() {
 
     }
 

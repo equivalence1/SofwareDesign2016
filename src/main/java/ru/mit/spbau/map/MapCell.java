@@ -16,6 +16,10 @@ public final class MapCell {
         }
     }
 
+    public MapCell(@NotNull TextureType texture) {
+        this(texture, VisabilityType.UNVISITED);
+    }
+
     public TextureType getTexture() {
         return texture;
     }
@@ -25,7 +29,7 @@ public final class MapCell {
     }
 
     /**
-     * What this cell contains
+     * What this cell contains in terms of texture (i.e. units not counted)
      */
     public enum TextureType {
         EMPTY,

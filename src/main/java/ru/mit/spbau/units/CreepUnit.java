@@ -1,4 +1,4 @@
 package ru.mit.spbau.units;
 
-public class PlayerUnit {
+public class CreepUnit {
 }

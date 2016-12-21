@@ -11,7 +11,7 @@ public final class LoseScreen implements Screen {
      */
     @Override
     public void displayOutput(@NotNull AsciiPanel terminal) {
-        terminal.write("ru.mit.spbau.Game Over", 1, 1);
+        terminal.write("ru.mit.spbau.game.Game Over", 1, 1);
         terminal.writeCenter("-- press [enter] to go to menu --", 22);
     }
 

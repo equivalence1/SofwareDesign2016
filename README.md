@@ -1,4 +1,4 @@
-#ru.mit.spbau.Game description
+#ru.mit.spbau.game.Game description
 
 #Code description
 

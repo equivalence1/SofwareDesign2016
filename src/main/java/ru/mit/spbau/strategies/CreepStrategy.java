@@ -1,13 +1,10 @@
-package ru.mit.spbau.units;
+package ru.mit.spbau.strategies;
 
 import org.jetbrains.annotations.NotNull;
 import ru.mit.spbau.map.RelativeMap;
+import ru.mit.spbau.units.CreepMove;
 
-/**
- * All creeps should implement this interface
- * in order to have ability to move
- */
-public interface MoveableCreep {
+public interface CreepStrategy {
 
     /**
      * Asks unit to perform next move

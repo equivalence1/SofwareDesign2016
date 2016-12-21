@@ -3,7 +3,7 @@ package ru.mit.spbau.view.screens;
 import java.awt.event.KeyEvent;
 import asciiPanel.AsciiPanel;
 import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.Game;
+import ru.mit.spbau.game.Game;
 
 public final class StartScreen implements Screen {
 

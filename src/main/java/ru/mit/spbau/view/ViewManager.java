@@ -1,7 +1,6 @@
 package ru.mit.spbau.view;
 
 import asciiPanel.AsciiPanel;
-import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import ru.mit.spbau.Main;
 import ru.mit.spbau.view.screens.Screen;
@@ -47,7 +46,7 @@ public final class ViewManager extends JFrame implements KeyListener {
 
     /**
      * Get instance of this class
-     * @return instance of thic class
+     * @return instance of this class
      */
     public static ViewManager getViewManager() {
         if (INSTANCE == null) {
