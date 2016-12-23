@@ -1,30 +1,33 @@
 package ru.mit.spbau.view.screens;
 
-import java.awt.event.KeyEvent;
 import asciiPanel.AsciiPanel;
-import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.model.game.Game;
+import java.awt.event.KeyEvent;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.jetbrains.annotations.NotNull;
 public final class StartScreen implements Screen {
 
-    /**
-     * {@inheritDoc}
-     */
+    @NotNull private static final Logger LOGGER = Logger.getLogger(StartScreen.class.getName());
+
     @Override
     public void displayOutput(@NotNull AsciiPanel terminal) {
+        LOGGER.log(Level.INFO, "displaying start screen");
         terminal.write("Roguelike", 1, 1);
         terminal.writeCenter("-- press [enter] to start or [esc] to exit --", 22);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Screen respondToUserInput(@NotNull KeyEvent key) {
         switch (key.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                final Game game = new Game();
-                return new PlayScreen(game);
+                try {
+                    return new PlayScreen();
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Could not show play screen", e);
+                    return null;
+                }
             case KeyEvent.VK_ESCAPE:
                 return null;
             default:

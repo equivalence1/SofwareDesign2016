@@ -12,7 +12,8 @@ public final class Position implements Copyable {
         UP,
         DOWN,
         LEFT,
-        RIGHT
+        RIGHT,
+        HOLD
     }
 
     private int x;
@@ -51,8 +52,9 @@ public final class Position implements Copyable {
      * Move one position in a given direction.
      * I still leave setters in case we want to have some kind of teleportation
      * @param d direction to move
+     * @return this position after move
      */
-    public final void move(@NotNull Direction d) {
+    public final Position move(@NotNull Direction d) {
         switch (d) {
             case UP:
                 y -= 1;
@@ -66,7 +68,19 @@ public final class Position implements Copyable {
             case RIGHT:
                 x += 1;
                 break;
+            case HOLD:
+                break;
         }
+        return this;
+    }
+
+    /**
+     * get distance between two positions
+     * @param position position to which to count distance to
+     * @return distance
+     */
+    public double getDistance(@NotNull Position position) {
+        return Math.sqrt((x - position.x) * (x - position.x) + (y - position.y) * (y - position.y));
     }
 
     /**
@@ -76,6 +90,15 @@ public final class Position implements Copyable {
     @Override
     public Position copy() {
         return new Position(x, y);
+    }
+
+    /**
+     * Check if positions are equal
+     * @param pos position with which to compare
+     * @return true if positions are equal, false otherwise
+     */
+    public boolean equals(Position pos) {
+        return x == pos.x && y == pos.y;
     }
 
 }

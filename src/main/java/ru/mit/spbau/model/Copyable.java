@@ -11,9 +11,11 @@ package ru.mit.spbau.model;
  * in my head, one may find it helpful for other ones.
  *
  * Yes, I know that this interface is pretty dumb as every object
- * in Java has <code>copy</code> method but with this one I wanted
+ * in Java has <code>copy</code> method as well as Java has {@link Cloneable}
+ * interface but with this one I wanted
  * to emphasise that some class should override <code>copy</code>in
- * security reasons.
+ * _security_ reasons (currently only {@link ru.mit.spbau.model.game.Position}
+ * is exception).
  */
 public interface Copyable {
 

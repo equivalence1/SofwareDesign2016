@@ -1,47 +1,38 @@
 package ru.mit.spbau.view;
 
-import asciiPanel.AsciiPanel;
-import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.Main;
 import ru.mit.spbau.view.screens.Screen;
 import ru.mit.spbau.view.screens.StartScreen;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import asciiPanel.AsciiPanel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-/**
- * In this class we listen for users key presses and change
- * our screen on each press.
- *
- * As we have only 1 screen (I mean real computer screen) this
- * class is a singleton
- */
-public final class ViewManager extends JFrame implements KeyListener {
-
-    private static final int HEIGHT = 24;
-    private static final int WIDTH = 80;
-
-    private static ViewManager INSTANCE;
-
-    @NotNull private final Runnable exitAction;
+public class ViewManager extends JFrame implements KeyListener {
     private AsciiPanel terminal;
     private Screen screen;
 
-    private ViewManager(@NotNull Runnable exitAction) {
+    private static ViewManager INSTANCE;
+
+    public ViewManager(){
         super();
-
-        this.exitAction = exitAction;
-        terminal = new AsciiPanel(WIDTH, HEIGHT);
-        screen = new StartScreen();
-
+        terminal = new AsciiPanel();
         add(terminal);
         pack();
+        screen = new StartScreen();
         addKeyListener(this);
         repaint();
+        INSTANCE = this;
+    }
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setVisible(true);
+    public void repaint(){
+        terminal.clear();
+        screen.displayOutput(terminal);
+        super.repaint();
+    }
+
+    public void keyPressed(KeyEvent e) {
+        setScreen(screen.respondToUserInput(e));
     }
 
     /**
@@ -50,16 +41,9 @@ public final class ViewManager extends JFrame implements KeyListener {
      */
     public static ViewManager getViewManager() {
         if (INSTANCE == null) {
-            INSTANCE = new ViewManager(Main::exitAction);
+            return new ViewManager();
         }
         return INSTANCE;
-    }
-
-    @Override
-    public void repaint(){
-        terminal.clear();
-        screen.displayOutput(terminal);
-        super.repaint();
     }
 
     /**
@@ -74,44 +58,18 @@ public final class ViewManager extends JFrame implements KeyListener {
         repaint();
     }
 
-    /**
-     * Height of our AsciiTerminal
-     * @return height of terminal
-     */
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    /**
-     * Width of our AsciiTerminal
-     * @return width of terminal
-     */
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void keyPressed(KeyEvent e) {
-        setScreen(screen.respondToUserInput(e));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void keyReleased(KeyEvent e) { }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void keyTyped(KeyEvent e) { }
 
     private void exit() {
-        exitAction.run();
+        System.exit(0);
+    }
+
+    public static void main(String[] args) {
+        ViewManager app = new ViewManager();
+        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        app.setVisible(true);
     }
 
 }

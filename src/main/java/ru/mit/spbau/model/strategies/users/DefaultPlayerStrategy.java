@@ -1,17 +1,22 @@
 package ru.mit.spbau.model.strategies.users;
 
-import org.intellij.lang.annotations.JdkConstants;
 import org.jetbrains.annotations.NotNull;
 import ru.mit.spbau.model.map.RelativeMap;
 import ru.mit.spbau.model.units.users.UserMove;
 import ru.mit.spbau.view.GUI;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+
 public final class DefaultPlayerStrategy implements PlayerStrategy {
 
     @NotNull private final GUI gui;
+    @NotNull private final BlockingQueue<UserMove> moves;
+
 
     public DefaultPlayerStrategy(@NotNull GUI gui) {
         this.gui = gui;
+        moves = new LinkedBlockingDeque<>();
     }
 
     /**
@@ -21,7 +26,11 @@ public final class DefaultPlayerStrategy implements PlayerStrategy {
     @Override
     public UserMove nextMove(@NotNull RelativeMap relativeMap) {
         gui.drawMap(relativeMap);
-        return null;
+        try {
+            return moves.take();
+        } catch (InterruptedException e) {
+            return UserMove.UNKNOWN;
+        }
     }
 
     /**
@@ -38,6 +47,16 @@ public final class DefaultPlayerStrategy implements PlayerStrategy {
     @Override
     public void notifyLose(@NotNull String name, int score) {
         gui.notifyLose(name, score);
+    }
+
+    /**
+     * add user's move to a queue
+     * @param move move to add
+     */
+    public void addMove(UserMove move) {
+        // please, don't ask...
+        moves.add(move);
+        moves.add(move);
     }
 
 }

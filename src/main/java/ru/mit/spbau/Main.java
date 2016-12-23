@@ -8,7 +8,7 @@ import ru.mit.spbau.view.ViewManager;
 public final class Main {
 
     public static void main(String[] args) {
-        ViewManager viewManager = ViewManager.getViewManager();
+//        ViewManager.getViewManager();
     }
 
     public static void exitAction() {
