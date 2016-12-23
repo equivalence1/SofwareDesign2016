@@ -1,7 +1,7 @@
-package ru.mit.spbau.Bufs;
+package ru.mit.spbau.model.Buffs;
 
 import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.units.Attributes;
+import ru.mit.spbau.model.units.Attributes;
 
 /**
  * This buff changes attack of unit.
@@ -22,6 +22,9 @@ public final class BuffAttack implements Buff {
         attributes.setAttack(attributes.getAttack() + attackChange);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void remove(@NotNull Attributes attributes) {
         attributes.setAttack(attributes.getAttack() - attackChange);

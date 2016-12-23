@@ -1,10 +1,12 @@
-package ru.mit.spbau.Bufs;
+package ru.mit.spbau.model.Buffs;
 
 import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.units.Attributes;
+import ru.mit.spbau.model.units.Attributes;
 
 /**
  * This interface defines buffs in our game.
+ *
+ * Buff can be a real buff, or debuff
  */
 public interface Buff {
 

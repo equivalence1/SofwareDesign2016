@@ -1,7 +1,7 @@
-package ru.mit.spbau.Bufs;
+package ru.mit.spbau.model.Buffs;
 
 import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.units.Attributes;
+import ru.mit.spbau.model.units.Attributes;
 
 /**
  * This buff changes maximum hp of unit.

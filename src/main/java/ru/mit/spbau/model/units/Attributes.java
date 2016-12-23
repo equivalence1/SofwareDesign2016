@@ -1,25 +1,24 @@
-package ru.mit.spbau.units;
+package ru.mit.spbau.model.units;
 
-import ru.mit.spbau.Bufs.Buff;
+import ru.mit.spbau.model.Buffs.Buff;
+import ru.mit.spbau.model.Copyable;
 
 /**
  * JavaBean
  * Contains all attributes of unit
  */
-public final class Attributes {
+public final class Attributes implements Copyable {
 
     private int maxHp;
     private int currentHp;
     private double visionRange;
     private int attack;
-    private final AttributesGetter getter;
 
     public Attributes(int maxHp, double visionRange, int attack) {
         this.maxHp = maxHp;
         this.currentHp = maxHp;
         this.visionRange = visionRange;
         this.attack = attack;
-        this.getter = new AttributesGetter();
     }
 
     public int getMaxHp() {
@@ -62,33 +61,10 @@ public final class Attributes {
         buff.remove(this);
     }
 
-    public AttributesGetter getGetter() {
-        return getter;
-    }
-
-    /**
-     * This class is needed to prevent strategies from cheating.
-     * Strategies should be able only to get attributes to choose their moves
-     * they should not modify it -- it will do our TODO SomeClass
-     */
-    private class AttributesGetter {
-
-        public int getMaxHp() {
-            return maxHp;
-        }
-
-        public int getCurrentHp() {
-            return currentHp;
-        }
-
-        public int getAttack() {
-            return attack;
-        }
-
-        public double getVisionRange() {
-            return visionRange;
-        }
-
+    public Attributes copy() {
+        final Attributes attributes = new Attributes(maxHp, visionRange, attack);
+        attributes.currentHp = currentHp;
+        return attributes;
     }
 
 }

@@ -1,17 +1,17 @@
-package ru.mit.spbau.Bufs;
+package ru.mit.spbau.model.Buffs;
 
 import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.units.Attributes;
+import ru.mit.spbau.model.units.Attributes;
 
 /**
  * Change unit's vision range
  */
 public final class BuffVision implements Buff {
 
-    private final double visionRangeChagne;
+    private final double visionRangeChange;
 
     public BuffVision(double visionRangeChagne) {
-        this.visionRangeChagne = visionRangeChagne;
+        this.visionRangeChange = visionRangeChagne;
     }
 
     /**
@@ -19,12 +19,15 @@ public final class BuffVision implements Buff {
      */
     @Override
     public void apply(@NotNull Attributes attributes) {
-        attributes.setVisionRange(attributes.getVisionRange() + visionRangeChagne);
+        attributes.setVisionRange(attributes.getVisionRange() + visionRangeChange);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void remove(@NotNull Attributes attributes) {
-        attributes.setVisionRange(attributes.getVisionRange() - visionRangeChagne);
+        attributes.setVisionRange(attributes.getVisionRange() - visionRangeChange);
     }
 
 }

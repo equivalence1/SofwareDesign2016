@@ -1,8 +1,8 @@
-package ru.mit.spbau.strategies;
+package ru.mit.spbau.model.strategies.creeps;
 
 import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.map.RelativeMap;
-import ru.mit.spbau.units.CreepMove;
+import ru.mit.spbau.model.map.RelativeMap;
+import ru.mit.spbau.model.units.creeps.CreepMove;
 
 public interface CreepStrategy {
 
@@ -11,6 +11,7 @@ public interface CreepStrategy {
      * @param relativeMap map as this creep sees it
      * @return unit's next move
      */
+    @NotNull
     CreepMove nextMove(@NotNull RelativeMap relativeMap);
 
 }

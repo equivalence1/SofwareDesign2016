@@ -1,4 +1,4 @@
-package ru.mit.spbau.map;
+package ru.mit.spbau.model.map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

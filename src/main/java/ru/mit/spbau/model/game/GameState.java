@@ -1,10 +1,11 @@
-package ru.mit.spbau.game;
+package ru.mit.spbau.model.game;
 
 import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.map.MapCell;
-import ru.mit.spbau.units.CreepUnit;
-import ru.mit.spbau.units.PlayerUnit;
-import ru.mit.spbau.units.Position;
+import ru.mit.spbau.model.map.MapCell;
+import ru.mit.spbau.model.strategies.users.PlayerStrategy;
+import ru.mit.spbau.model.units.creeps.BlindZombieCreep;
+import ru.mit.spbau.model.units.creeps.CreepUnit;
+import ru.mit.spbau.model.units.users.PlayerUnit;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,12 +13,14 @@ import java.util.*;
 
 public final class GameState {
 
+    @NotNull private final PlayerStrategy playerStrategy;
     @NotNull private final MapCell[][] map;
     private PlayerUnit player;
     @NotNull private final Set<CreepUnit> creeps;
 
-    private GameState(List<String> lines) throws IOException {
+    private GameState(@NotNull List<String> lines, @NotNull PlayerStrategy playerStrategy) throws IOException {
         creeps = new HashSet<>();
+        this.playerStrategy = playerStrategy;
 
         final int height = lines.size();
         final int width = lines.stream().map(String::length).max(Integer::compare).orElseGet(() -> 0);
@@ -42,10 +45,11 @@ public final class GameState {
     /**
      * Read map from file and generate state from it
      * @param file containing map
+     * @param playerStrategy player strategy to use in player's unit created
      * @return state
      * @throws IOException in case of error
      */
-    public static GameState fromFile(@NotNull File file) throws IOException {
+    public static GameState fromFile(@NotNull File file, @NotNull PlayerStrategy playerStrategy) throws IOException {
         final Scanner scanner = new Scanner(file);
         final List<String> lines = new ArrayList<>();
 
@@ -53,7 +57,7 @@ public final class GameState {
             lines.add(scanner.nextLine());
         }
 
-        return new GameState(lines);
+        return new GameState(lines, playerStrategy);
     }
 
     public MapCell[][] getMap() {
@@ -91,14 +95,14 @@ public final class GameState {
     }
 
     private void addZombie(@NotNull Position pos) {
-        creeps.add(new CreepUnit());
+        creeps.add(new BlindZombieCreep(pos));
     }
 
     private void addPlayer(@NotNull Position pos) throws IllegalStateException {
         if (player != null) {
             throw new IllegalStateException("Two users on map: we only support single user mode for now");
         }
-        player = new PlayerUnit(); // TODO add position
+        player = new PlayerUnit(pos, playerStrategy);
     }
 
 }

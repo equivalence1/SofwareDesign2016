@@ -3,10 +3,10 @@ package ru.mit.spbau.view.screens;
 import java.awt.event.KeyEvent;
 import asciiPanel.AsciiPanel;
 import org.jetbrains.annotations.Nullable;
-import ru.mit.spbau.game.Game;
+import ru.mit.spbau.model.game.Game;
 import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.map.RelativeMap;
-import ru.mit.spbau.units.UserMove;
+import ru.mit.spbau.model.map.RelativeMap;
+import ru.mit.spbau.model.units.users.UserMove;
 
 public final class PlayScreen implements Screen {
 
@@ -38,7 +38,6 @@ public final class PlayScreen implements Screen {
             default:
                 final UserMove userMove = getUserMove(key.getKeyCode());
                 game.getPlayer().addMove(userMove);
-                game.doOneMove();
                 return this;
         }
     }
