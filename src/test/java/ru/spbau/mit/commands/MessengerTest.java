@@ -94,7 +94,7 @@ public class MessengerTest {
         hostTask.registerNotifySuccess(this::notifySuccessHost);
 
         hostTask.start();
-        Thread.sleep(100);
+        Thread.sleep(1000);
 
         final String host = "127.0.0.1";
         final int port = hostTask.getConnection().getPort();
