@@ -1,4 +1,4 @@
-package ru.mit.spbau.view;
+package ru.mit.spbau;
 
 import ru.mit.spbau.view.screens.Screen;
 import ru.mit.spbau.view.screens.StartScreen;
@@ -12,7 +12,7 @@ import java.awt.event.KeyListener;
  * Our main view class.
  * Responds to user's presses and controls screens
  */
-public class ViewManager extends JFrame implements KeyListener {
+public class AppMain extends JFrame implements KeyListener {
 
     private static final int WIDTH = 80;
     private static final int HEIGHT = 28;
@@ -20,9 +20,9 @@ public class ViewManager extends JFrame implements KeyListener {
     private final AsciiPanel terminal;
     private Screen screen;
 
-    private static ViewManager INSTANCE;
+    private static AppMain INSTANCE;
 
-    public ViewManager(){
+    public AppMain(){
         super();
         terminal = new AsciiPanel(WIDTH, HEIGHT);
         add(terminal);
@@ -51,9 +51,9 @@ public class ViewManager extends JFrame implements KeyListener {
      * Get instance of this class
      * @return instance of this class
      */
-    public static ViewManager getViewManager() {
+    public static AppMain getViewManager() {
         if (INSTANCE == null) {
-            return new ViewManager();
+            return new AppMain();
         }
         return INSTANCE;
     }
@@ -95,7 +95,7 @@ public class ViewManager extends JFrame implements KeyListener {
     }
 
     public static void main(String[] args) {
-        ViewManager app = new ViewManager();
+        AppMain app = new AppMain();
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setVisible(true);
     }

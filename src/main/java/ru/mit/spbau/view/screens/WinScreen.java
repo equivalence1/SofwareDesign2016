@@ -3,7 +3,7 @@ package ru.mit.spbau.view.screens;
 import java.awt.event.KeyEvent;
 import asciiPanel.AsciiPanel;
 import org.jetbrains.annotations.NotNull;
-import ru.mit.spbau.view.ViewManager;
+import ru.mit.spbau.AppMain;
 
 public final class WinScreen implements Screen {
 
@@ -22,7 +22,7 @@ public final class WinScreen implements Screen {
     public void displayOutput(@NotNull AsciiPanel terminal) {
         terminal.write(name + " won!", 1, 1);
         terminal.write("Your score: " + score, 1, 2);
-        terminal.writeCenter("-- press [enter] to go to menu. --", ViewManager.getTerminalHeight() - 1);
+        terminal.writeCenter("-- press [enter] to go to menu. --", AppMain.getTerminalHeight() - 1);
     }
 
     /**

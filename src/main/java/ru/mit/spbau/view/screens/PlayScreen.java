@@ -20,7 +20,7 @@ import ru.mit.spbau.model.units.creeps.CreepUnit;
 import ru.mit.spbau.model.units.users.PlayerUnit;
 import ru.mit.spbau.model.units.users.UserMove;
 import ru.mit.spbau.view.GUI;
-import ru.mit.spbau.view.ViewManager;
+import ru.mit.spbau.AppMain;
 
 public final class PlayScreen implements Screen, GUI {
 
@@ -54,7 +54,7 @@ public final class PlayScreen implements Screen, GUI {
             displayAttributes(terminal);
             displayInventory(terminal);
         }
-        terminal.writeCenter("-- press [escape] to exit game --", ViewManager.getTerminalHeight() - 1);
+        terminal.writeCenter("-- press [escape] to exit game --", AppMain.getTerminalHeight() - 1);
     }
 
     /**
@@ -76,13 +76,13 @@ public final class PlayScreen implements Screen, GUI {
     @Override
     public void notifyLose(@NotNull String userName, int score) {
         LOGGER.info("Notified lose.");
-        ViewManager.getViewManager().setScreen(new LoseScreen(userName, score));
+        AppMain.getViewManager().setScreen(new LoseScreen(userName, score));
     }
 
     @Override
     public void notifyWin(@NotNull String userName, int score) {
         LOGGER.info("Notified win.");
-        ViewManager.getViewManager().setScreen(new WinScreen(userName, score));
+        AppMain.getViewManager().setScreen(new WinScreen(userName, score));
     }
 
     @Override
@@ -90,7 +90,7 @@ public final class PlayScreen implements Screen, GUI {
         LOGGER.info("drawing new map");
         this.map = map;
         this.score = score;
-        ViewManager.getViewManager().setScreen(this);
+        AppMain.getViewManager().setScreen(this);
     }
 
     private void displayMap(@NotNull AsciiPanel terminal) {
@@ -111,7 +111,7 @@ public final class PlayScreen implements Screen, GUI {
     }
 
     private void displayScore(@NotNull AsciiPanel terminal) {
-        terminal.write("score: " + score, 1, ViewManager.getTerminalHeight() - 4);
+        terminal.write("score: " + score, 1, AppMain.getTerminalHeight() - 4);
     }
 
     private void displayAttributes(@NotNull AsciiPanel terminal) {
@@ -130,7 +130,7 @@ public final class PlayScreen implements Screen, GUI {
         stringBuilder.append(";  vision range: ");
         stringBuilder.append(attributes.getVisionRange());
 
-        terminal.write(stringBuilder.toString(), 1, ViewManager.getTerminalHeight() - 3);
+        terminal.write(stringBuilder.toString(), 1, AppMain.getTerminalHeight() - 3);
     }
 
     private void displayInventory(@NotNull AsciiPanel terminal) {
@@ -144,7 +144,7 @@ public final class PlayScreen implements Screen, GUI {
             stringBuilder.append("; ");
         });
 
-        terminal.write(stringBuilder.toString(), 1, ViewManager.getTerminalHeight() - 2);
+        terminal.write(stringBuilder.toString(), 1, AppMain.getTerminalHeight() - 2);
     }
 
     private void displayGameObject(@NotNull GameObject object, @NotNull AsciiPanel terminal) {

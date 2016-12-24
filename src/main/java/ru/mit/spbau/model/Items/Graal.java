@@ -4,6 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import ru.mit.spbau.model.game.Position;
 import ru.mit.spbau.model.units.users.PlayerUnit;
 
+/**
+ * The main purpose of player is to take graal
+ */
 public final class Graal extends Item {
 
     private PlayerUnit playerUnit;
