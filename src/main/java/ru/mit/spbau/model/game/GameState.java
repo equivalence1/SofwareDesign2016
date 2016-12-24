@@ -11,18 +11,18 @@ import ru.mit.spbau.model.map.LevelMap;
 public final class GameState {
 
     @NotNull private final LevelMap map;
-    @NotNull private final Game game;
+    @NotNull private final Player player;
     @NotNull private GameStatus gameStatus;
 
-    public GameState(@NotNull LevelMap map, @NotNull Game game) {
+    public GameState(@NotNull LevelMap map, @NotNull Player player) {
         this.map = map;
-        this.game = game;
+        this.player = player;
         gameStatus = GameStatus.RUNNING;
     }
 
     @NotNull
     public Player getPlayer() {
-        return game.getPlayer();
+        return player;
     }
 
     @NotNull
@@ -40,7 +40,7 @@ public final class GameState {
      */
     public void doOneMove() {
         map.doOneMove(this);
-        if (!game.getPlayer().getPlayerUnit().isAlive()) {
+        if (!player.getPlayerUnit().isAlive()) {
             gameStatus = GameStatus.LOSE;
         }
         if (getPlayer().getPlayerUnit().getInventory().contains(ItemType.GRAAL)) {

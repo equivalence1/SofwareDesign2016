@@ -111,7 +111,7 @@ public final class Game {
     private void nextLevel() throws IOException {
         currentLevel++;
         final LevelMap levelMap = createMap(String.valueOf(currentLevel), playerStrategy);
-        gameState = new GameState(levelMap, this);
+        gameState = new GameState(levelMap, player);
         player.setPlayerUnit(gameState.getMap().getPlayerUnit());
     }
 

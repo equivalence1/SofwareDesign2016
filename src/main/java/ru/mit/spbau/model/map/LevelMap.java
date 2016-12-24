@@ -134,7 +134,7 @@ public final class LevelMap {
      * @param unit for whom to update map
      * @return unit's map after update
      */
-    public MapCell[][] updateKnownMap(@NotNull Unit unit) {
+    private MapCell[][] updateKnownMap(@NotNull Unit unit) {
         if (unit.getKnownMap() == null) {
             initMap(unit);
         }

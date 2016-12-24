@@ -33,10 +33,6 @@ public final class Player {
         return score;
     }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
-
     /**
      * increment player's score
      * @param change how much to add to score

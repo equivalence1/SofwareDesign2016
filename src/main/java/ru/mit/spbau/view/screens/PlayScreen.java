@@ -73,18 +73,27 @@ public final class PlayScreen implements Screen, GUI {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void notifyLose(@NotNull String userName, int score) {
         LOGGER.info("Notified lose.");
         AppMain.getViewManager().setScreen(new LoseScreen(userName, score));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void notifyWin(@NotNull String userName, int score) {
         LOGGER.info("Notified win.");
         AppMain.getViewManager().setScreen(new WinScreen(userName, score));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawMap(@NotNull RelativeMap map, int score) {
         LOGGER.info("drawing new map");

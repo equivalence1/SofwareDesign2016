@@ -40,6 +40,10 @@ public abstract class Unit extends GameObject {
         return this.attributes;
     }
 
+    /**
+     * Move this unit
+     * @param direction direction to move to
+     */
     public final void move(Position.Direction direction) {
         getPosition().move(direction);
     }
