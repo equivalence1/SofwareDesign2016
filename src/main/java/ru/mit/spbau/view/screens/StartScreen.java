@@ -7,6 +7,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jetbrains.annotations.NotNull;
+import ru.mit.spbau.view.ViewManager;
+
 public final class StartScreen implements Screen {
 
     @NotNull private static final Logger LOGGER = Logger.getLogger(StartScreen.class.getName());
@@ -15,7 +17,7 @@ public final class StartScreen implements Screen {
     public void displayOutput(@NotNull AsciiPanel terminal) {
         LOGGER.log(Level.INFO, "displaying start screen");
         terminal.write("Roguelike", 1, 1);
-        terminal.writeCenter("-- press [enter] to start or [esc] to exit --", 22);
+        terminal.writeCenter("-- press [enter] to start or [esc] to exit --", ViewManager.getTerminalHeight() - 1);
     }
 
     @Override

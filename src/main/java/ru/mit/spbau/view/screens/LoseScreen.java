@@ -3,8 +3,17 @@ package ru.mit.spbau.view.screens;
 import java.awt.event.KeyEvent;
 import asciiPanel.AsciiPanel;
 import org.jetbrains.annotations.NotNull;
+import ru.mit.spbau.view.ViewManager;
 
 public final class LoseScreen implements Screen {
+
+    @NotNull private final String name;
+    private final int score;
+
+    public LoseScreen(@NotNull String name, int score) {
+        this.name = name;
+        this.score = score;
+    }
 
     /**
      * {@inheritDoc}
@@ -12,7 +21,8 @@ public final class LoseScreen implements Screen {
     @Override
     public void displayOutput(@NotNull AsciiPanel terminal) {
         terminal.write("Game Over", 1, 1);
-        terminal.writeCenter("-- press [enter] to go to menu --", 22);
+        terminal.write("Your score: " + score, 1, 2);
+        terminal.writeCenter("-- press [enter] to go to menu --", ViewManager.getTerminalHeight() - 1);
     }
 
     /**

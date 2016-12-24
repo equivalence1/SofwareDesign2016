@@ -24,8 +24,8 @@ public final class DefaultPlayerStrategy implements PlayerStrategy {
      */
     @NotNull
     @Override
-    public UserMove nextMove(@NotNull RelativeMap relativeMap) {
-        gui.drawMap(relativeMap);
+    public UserMove nextMove(@NotNull RelativeMap relativeMap, int score) {
+        gui.drawMap(relativeMap, score);
         try {
             return moves.take();
         } catch (InterruptedException e) {
@@ -54,8 +54,6 @@ public final class DefaultPlayerStrategy implements PlayerStrategy {
      * @param move move to add
      */
     public void addMove(UserMove move) {
-        // please, don't ask...
-        moves.add(move);
         moves.add(move);
     }
 

@@ -61,8 +61,4 @@ public final class RelativeMap {
         return objects;
     }
 
-    public double getVisabilityRange() {
-        return visabilityRange;
-    }
-
 }

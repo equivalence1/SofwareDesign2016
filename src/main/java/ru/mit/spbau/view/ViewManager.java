@@ -8,15 +8,23 @@ import asciiPanel.AsciiPanel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+/**
+ * Our main view class.
+ * Responds to user's presses and controls screens
+ */
 public class ViewManager extends JFrame implements KeyListener {
-    private AsciiPanel terminal;
+
+    private static final int WIDTH = 80;
+    private static final int HEIGHT = 28;
+
+    private final AsciiPanel terminal;
     private Screen screen;
 
     private static ViewManager INSTANCE;
 
     public ViewManager(){
         super();
-        terminal = new AsciiPanel();
+        terminal = new AsciiPanel(WIDTH, HEIGHT);
         add(terminal);
         pack();
         screen = new StartScreen();
@@ -31,8 +39,12 @@ public class ViewManager extends JFrame implements KeyListener {
         super.repaint();
     }
 
-    public void keyPressed(KeyEvent e) {
-        setScreen(screen.respondToUserInput(e));
+    public static int getTerminalWidth() {
+        return WIDTH;
+    }
+
+    public static int getTerminalHeight() {
+        return HEIGHT;
     }
 
     /**
@@ -58,8 +70,24 @@ public class ViewManager extends JFrame implements KeyListener {
         repaint();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void keyPressed(KeyEvent e) {
+        setScreen(screen.respondToUserInput(e));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void keyReleased(KeyEvent e) { }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void keyTyped(KeyEvent e) { }
 
     private void exit() {

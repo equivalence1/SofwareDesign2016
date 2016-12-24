@@ -1,7 +1,9 @@
 package ru.mit.spbau.model.map;
 
 import org.jetbrains.annotations.NotNull;
+import ru.mit.spbau.model.Items.*;
 import ru.mit.spbau.model.game.GameObject;
+import ru.mit.spbau.model.game.GameState;
 import ru.mit.spbau.model.game.Position;
 import ru.mit.spbau.model.strategies.users.PlayerStrategy;
 import ru.mit.spbau.model.units.Unit;
@@ -13,9 +15,7 @@ import ru.mit.spbau.model.units.users.UserMove;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,13 +31,13 @@ public final class LevelMap {
     @NotNull private final PlayerStrategy playerStrategy;
 
     private PlayerUnit playerUnit;
-    @NotNull private List<GameObject> gameObjects;
+    @NotNull private Set<GameObject> gameObjects;
     @NotNull private final MapCell[][] map;
     private final int mapWidth;
     private final int mapHeight;
 
     private LevelMap(@NotNull List<String> lines, @NotNull PlayerStrategy playerStrategy) throws IOException {
-        this.gameObjects = new ArrayList<>();
+        this.gameObjects = new HashSet<>();
         this.playerStrategy = playerStrategy;
 
         mapHeight = lines.size();
@@ -175,9 +175,9 @@ public final class LevelMap {
     /**
      * let every unit perform one move
      */
-    public void doOneMove() {
+    public void doOneMove(@NotNull GameState gameState) {
         updateKnownMaps();
-        final UserMove playersMove = getPlayerUnit().nextMove(getRelativeMap(getPlayerUnit()));
+        final UserMove playersMove = getPlayerUnit().nextMove(getRelativeMap(getPlayerUnit()), gameState.getPlayer().getScore());
         if (playersMove == UserMove.UNKNOWN) {
             LOGGER.log(Level.INFO, "User tried to perform unknown move");
             return;
@@ -218,7 +218,7 @@ public final class LevelMap {
                 }
                 if (doesIntersect(current.getPosition(), directions.get(i),
                         units.get(j).getPosition(), directions.get(j))) {
-                    unitsFight(current, units.get(j));
+                    unitsFight(current, units.get(j), gameState);
                     moveDone[i] = true;
                     moveDone[j] = true;
                     if (!current.isAlive()) {
@@ -240,11 +240,25 @@ public final class LevelMap {
 
     private boolean doesIntersect(Position pos1, Position.Direction direction1,
                                   Position pos2, Position.Direction direction2) {
-        if (pos1.equals(pos2.copy().move(direction2))
-                && pos2.equals(pos1.copy().move(direction1))) {
+        final Position finalPos1;
+        if (canMoveToDirection(pos1, direction1)) {
+            finalPos1 = pos1.copy().move(direction1);
+        } else {
+            finalPos1 = pos1;
+        }
+
+        final Position finalPos2;
+        if (canMoveToDirection(pos2, direction2)) {
+            finalPos2 = pos2.copy().move(direction2);
+        } else {
+            finalPos2 = pos2;
+        }
+
+        if (pos1.equals(finalPos2)
+                && pos2.equals(finalPos1)) {
             return true;
         }
-        if (pos1.copy().move(direction1).equals(pos2.copy().move(direction2))) {
+        if (finalPos1.equals(finalPos2)) {
             return true;
         }
         return false;
@@ -256,7 +270,15 @@ public final class LevelMap {
                 || afterMove.getY() >= mapHeight) {
             return false;
         }
-        return (map[afterMove.getY()][afterMove.getX()].getTexture() == MapCell.TextureType.EMPTY);
+        if (map[afterMove.getY()][afterMove.getX()].getTexture() != MapCell.TextureType.EMPTY) {
+            return false;
+        }
+        for (GameObject gameObject : gameObjects) {
+            if (!(gameObject instanceof Unit) && gameObject.getPosition().equals(afterMove) && !gameObject.isTransparent()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Position.Direction getDirection(@NotNull UserMove userMove) {
@@ -290,16 +312,43 @@ public final class LevelMap {
     }
 
     private void pickItem(@NotNull PlayerUnit playerUnit) {
-
+        Item dropped = null;
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject.getPosition().equals(playerUnit.getPosition())) {
+                if (gameObject instanceof Item) {
+                    if (!playerUnit.canTake((Item)gameObject)) {
+                        dropped = playerUnit.dropItem(((Item) gameObject).getItemClass());
+                    }
+                    if (dropped != null) {
+                        gameObjects.remove(dropped);
+                        LOGGER.info("Player dropped item " + dropped.getName());
+                    }
+                    LOGGER.info("Player picked item " + ((Item) gameObject).getName());
+                    playerUnit.pickItem((Item)gameObject);
+                    gameObjects.remove(gameObject);
+                    break;
+                }
+            }
+        }
+        if (dropped != null) {
+            gameObjects.add(dropped);
+            dropped.setPosition(playerUnit.getPosition().copy());
+        }
     }
 
-    private void unitsFight(@NotNull Unit unit1, @NotNull Unit unit2) {
+    private void unitsFight(@NotNull Unit unit1, @NotNull Unit unit2, @NotNull GameState gameState) {
         unit1.attacked(unit2.getAttributes().getAttack());
         unit2.attacked(unit1.getAttributes().getAttack());
+        if (!unit2.isAlive() && unit1 instanceof PlayerUnit) {
+            gameState.getPlayer().incScore(unit2.getCost());
+        }
+        if (!unit1.isAlive() && unit2 instanceof PlayerUnit) {
+            gameState.getPlayer().incScore(unit1.getCost());
+        }
     }
 
     private void refreshGameObjects() {
-        final List<GameObject> newGameObjects = new ArrayList<>();
+        final Set<GameObject> newGameObjects = new HashSet<>();
         for (GameObject gameObject : gameObjects) {
             if (gameObject instanceof Unit) {
                 if (((Unit) gameObject).isAlive()) {
@@ -332,7 +381,7 @@ public final class LevelMap {
     }
 
     @NotNull
-    private MapCell makeMapCell(int i, int j, char ch) throws IOException {
+    private MapCell makeMapCell(int y, int x, char ch) throws IOException {
         switch (ch) {
             case '.':
                 return new MapCell(MapCell.TextureType.EMPTY);
@@ -342,11 +391,26 @@ public final class LevelMap {
                 return new MapCell(MapCell.TextureType.WALL);
             case 'E':
                 return new MapCell(MapCell.TextureType.EXIT);
+            case '+':
+                gameObjects.add(new HealingPotion(new Position(x, y)));
+                return new MapCell(MapCell.TextureType.EMPTY);
+            case 'A':
+                gameObjects.add(new SimpleArmor(new Position(x, y)));
+                return new MapCell(MapCell.TextureType.EMPTY);
+            case 's':
+                gameObjects.add(new SimpleSword(new Position(x, y)));
+                return new MapCell(MapCell.TextureType.EMPTY);
+            case 'S':
+                gameObjects.add(new CoolSword(new Position(x, y)));
+                return new MapCell(MapCell.TextureType.EMPTY);
+            case 'G':
+                gameObjects.add(new Graal(new Position(x, y)));
+                return new MapCell(MapCell.TextureType.EMPTY);
             case 'Z':
-                gameObjects.add(new ZombieCreep(new Position(i, j)));
+                gameObjects.add(new ZombieCreep(new Position(x, y)));
                 return new MapCell(MapCell.TextureType.EMPTY);
             case 'U':
-                gameObjects.add(new PlayerUnit(new Position(i, j), playerStrategy));
+                gameObjects.add(new PlayerUnit(new Position(x, y), playerStrategy));
                 return new MapCell(MapCell.TextureType.EMPTY);
             default:
                 throw new IOException("unknown symbol '" + ch + "'");

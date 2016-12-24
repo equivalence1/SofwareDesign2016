@@ -12,10 +12,11 @@ public interface PlayerStrategy {
     /**
      * Asks unit to perform next move.
      * @param relativeMap part as this player sees it
+     * @param score player's score
      * @return unit's next move
      */
     @NotNull
-    UserMove nextMove(@NotNull RelativeMap relativeMap);
+    UserMove nextMove(@NotNull RelativeMap relativeMap, int score);
 
     /**
      * Notify this strategy that it lost

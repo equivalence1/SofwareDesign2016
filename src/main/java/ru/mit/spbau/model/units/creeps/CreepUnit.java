@@ -44,10 +44,4 @@ public abstract class CreepUnit extends Unit {
         }
     }
 
-    /**
-     * How much score will player get for this creep
-     * @return cost of this creep
-     */
-    public abstract int getCost();
-
 }

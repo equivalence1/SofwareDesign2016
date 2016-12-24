@@ -21,12 +21,16 @@ public final class Game {
     @NotNull private final Thread gameThread;
     @NotNull private GameState gameState;
     @NotNull private final Player player;
+    @NotNull private final PlayerStrategy playerStrategy;
+
+    private int currentLevel;
 
     public Game(@NotNull PlayerStrategy playerStrategy, @NotNull String playerName) throws IOException {
+        currentLevel = 0;
         gameThread = new Thread(this::gameLoop);
-        final LevelMap levelMap = createMap("1", playerStrategy);
-        gameState = new GameState(levelMap, playerName, this);
-        player = gameState.getPlayer();
+        this.playerStrategy = playerStrategy;
+        player = new Player(playerName);
+        nextLevel();
     }
 
     /**
@@ -85,10 +89,30 @@ public final class Game {
                 break;
             }
             if (gameState.getGameStatus() == GameState.GameStatus.WIN) {
-                player.getPlayerUnit().notifyWin(player.getName(), player.getScore());
-                break;
+                if (isLastLevel()) {
+                    player.getPlayerUnit().notifyWin(player.getName(), player.getScore());
+                    break;
+                } else {
+                    try {
+                        nextLevel();
+                    } catch (IOException e) {
+                        LOGGER.log(Level.WARNING, "Could not construct next level");
+                        player.getPlayerUnit().notifyWin(player.getName(), player.getScore());
+                    }
+                }
             }
         }
+    }
+
+    private boolean isLastLevel() {
+        return currentLevel == 2;
+    }
+
+    private void nextLevel() throws IOException {
+        currentLevel++;
+        final LevelMap levelMap = createMap(String.valueOf(currentLevel), playerStrategy);
+        gameState = new GameState(levelMap, this);
+        player.setPlayerUnit(gameState.getMap().getPlayerUnit());
     }
 
     private void doOneMove() {

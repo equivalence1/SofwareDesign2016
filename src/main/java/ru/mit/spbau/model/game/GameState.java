@@ -1,6 +1,7 @@
 package ru.mit.spbau.model.game;
 
 import org.jetbrains.annotations.NotNull;
+import ru.mit.spbau.model.Items.ItemType;
 import ru.mit.spbau.model.map.LevelMap;
 
 /**
@@ -9,22 +10,19 @@ import ru.mit.spbau.model.map.LevelMap;
  */
 public final class GameState {
 
-    @NotNull private final Player player;
     @NotNull private final LevelMap map;
     @NotNull private final Game game;
     @NotNull private GameStatus gameStatus;
 
-    public GameState(@NotNull LevelMap map, @NotNull String playerName, @NotNull Game game) {
+    public GameState(@NotNull LevelMap map, @NotNull Game game) {
         this.map = map;
         this.game = game;
-        player = new Player(playerName);
-        player.setPlayerUnit(map.getPlayerUnit());
         gameStatus = GameStatus.RUNNING;
     }
 
     @NotNull
     public Player getPlayer() {
-        return player;
+        return game.getPlayer();
     }
 
     @NotNull
@@ -37,12 +35,15 @@ public final class GameState {
         return gameStatus;
     }
 
+    /**
+     * Perform one move in a game
+     */
     public void doOneMove() {
-        map.doOneMove();
-        if (!player.getPlayerUnit().isAlive()) {
+        map.doOneMove(this);
+        if (!game.getPlayer().getPlayerUnit().isAlive()) {
             gameStatus = GameStatus.LOSE;
         }
-        if (map.getAllCreeps().size() == 0) {
+        if (getPlayer().getPlayerUnit().getInventory().contains(ItemType.GRAAL)) {
             gameStatus = GameStatus.WIN;
         }
     }

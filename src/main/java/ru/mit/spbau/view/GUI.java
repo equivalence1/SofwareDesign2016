@@ -5,7 +5,12 @@ import ru.mit.spbau.model.map.RelativeMap;
 
 public interface GUI {
 
-    void drawMap(@NotNull RelativeMap relativeMap);
+    /**
+     * Display map to user
+     * @param relativeMap map relative to this user
+     * @param score player's score
+     */
+    void drawMap(@NotNull RelativeMap relativeMap, int score);
 
     /**
      * Tells our GUI that player won

@@ -7,15 +7,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import asciiPanel.AsciiPanel;
-import org.jetbrains.annotations.Nullable;
+import ru.mit.spbau.model.Items.*;
 import ru.mit.spbau.model.game.Game;
 import org.jetbrains.annotations.NotNull;
 import ru.mit.spbau.model.game.GameObject;
 import ru.mit.spbau.model.map.MapCell;
 import ru.mit.spbau.model.map.RelativeMap;
 import ru.mit.spbau.model.strategies.users.DefaultPlayerStrategy;
-import ru.mit.spbau.model.units.Unit;
-import ru.mit.spbau.model.units.creeps.CreepMove;
+import ru.mit.spbau.model.units.Attributes;
+import ru.mit.spbau.model.units.Inventory;
 import ru.mit.spbau.model.units.creeps.CreepUnit;
 import ru.mit.spbau.model.units.users.PlayerUnit;
 import ru.mit.spbau.model.units.users.UserMove;
@@ -28,7 +28,9 @@ public final class PlayScreen implements Screen, GUI {
 
     @NotNull private final DefaultPlayerStrategy playerStrategy;
     @NotNull private final Game game;
+
     private RelativeMap map;
+    private int score;
 
     public PlayScreen() throws IOException {
         playerStrategy = new DefaultPlayerStrategy(this);
@@ -48,8 +50,11 @@ public final class PlayScreen implements Screen, GUI {
             terminal.write("Have fun!", 1, 1);
         } else {
             displayMap(terminal);
+            displayScore(terminal);
+            displayAttributes(terminal);
+            displayInventory(terminal);
         }
-        terminal.writeCenter("-- press [escape] to exit game --", 22);
+        terminal.writeCenter("-- press [escape] to exit game --", ViewManager.getTerminalHeight() - 1);
     }
 
     /**
@@ -71,19 +76,20 @@ public final class PlayScreen implements Screen, GUI {
     @Override
     public void notifyLose(@NotNull String userName, int score) {
         LOGGER.info("Notified lose.");
-        ViewManager.getViewManager().setScreen(new LoseScreen());
+        ViewManager.getViewManager().setScreen(new LoseScreen(userName, score));
     }
 
     @Override
     public void notifyWin(@NotNull String userName, int score) {
         LOGGER.info("Notified win.");
-        ViewManager.getViewManager().setScreen(new WinScreen());
+        ViewManager.getViewManager().setScreen(new WinScreen(userName, score));
     }
 
     @Override
-    public void drawMap(@NotNull RelativeMap map) {
+    public void drawMap(@NotNull RelativeMap map, int score) {
         LOGGER.info("drawing new map");
         this.map = map;
+        this.score = score;
         ViewManager.getViewManager().setScreen(this);
     }
 
@@ -104,12 +110,64 @@ public final class PlayScreen implements Screen, GUI {
         displayGameObject(map.getSelf(), terminal);
     }
 
+    private void displayScore(@NotNull AsciiPanel terminal) {
+        terminal.write("score: " + score, 1, ViewManager.getTerminalHeight() - 4);
+    }
+
+    private void displayAttributes(@NotNull AsciiPanel terminal) {
+        final PlayerUnit playerUnit = (PlayerUnit)map.getSelf();
+        final Attributes attributes = playerUnit.getAttributes();
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("attributes:   hp: ");
+        stringBuilder.append(attributes.getCurrentHp());
+        stringBuilder.append("/");
+        stringBuilder.append(attributes.getMaxHp());
+
+        stringBuilder.append(";  attack: ");
+        stringBuilder.append(attributes.getAttack());
+
+        stringBuilder.append(";  vision range: ");
+        stringBuilder.append(attributes.getVisionRange());
+
+        terminal.write(stringBuilder.toString(), 1, ViewManager.getTerminalHeight() - 3);
+    }
+
+    private void displayInventory(@NotNull AsciiPanel terminal) {
+        final PlayerUnit playerUnit = (PlayerUnit)map.getSelf();
+        final Inventory inventory = playerUnit.getInventory();
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("inventory:   ");
+        inventory.getItems().forEach(i -> {
+            stringBuilder.append(i.getName());
+            stringBuilder.append("; ");
+        });
+
+        terminal.write(stringBuilder.toString(), 1, ViewManager.getTerminalHeight() - 2);
+    }
+
     private void displayGameObject(@NotNull GameObject object, @NotNull AsciiPanel terminal) {
         if (object instanceof CreepUnit) {
             terminal.write('Z', object.getPosition().getX(), object.getPosition().getY(), Color.RED);
         }
         if (object instanceof PlayerUnit) {
             terminal.write('@', object.getPosition().getX(), object.getPosition().getY(), Color.YELLOW);
+        }
+        if (object instanceof SimpleArmor) {
+            terminal.write('A', object.getPosition().getX(), object.getPosition().getY(), Color.ORANGE);
+        }
+        if (object instanceof SimpleSword) {
+            terminal.write('s', object.getPosition().getX(), object.getPosition().getY(), Color.CYAN);
+        }
+        if (object instanceof CoolSword) {
+            terminal.write('S', object.getPosition().getX(), object.getPosition().getY(), Color.MAGENTA);
+        }
+        if (object instanceof HealingPotion) {
+            terminal.write('+', object.getPosition().getX(), object.getPosition().getY(), Color.GREEN);
+        }
+        if (object instanceof Graal) {
+            terminal.write('G', object.getPosition().getX(), object.getPosition().getY(), Color.YELLOW);
         }
     }
 
@@ -174,7 +232,7 @@ public final class PlayScreen implements Screen, GUI {
                 return UserMove.RIGHT;
             case KeyEvent.VK_LEFT:
                 return UserMove.LEFT;
-            case KeyEvent.VK_E:
+            case KeyEvent.VK_SPACE:
                 return UserMove.PICK;
             default:
                 return UserMove.UNKNOWN;

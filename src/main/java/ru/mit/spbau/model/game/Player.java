@@ -3,6 +3,9 @@ package ru.mit.spbau.model.game;
 import org.jetbrains.annotations.NotNull;
 import ru.mit.spbau.model.units.users.PlayerUnit;
 
+/**
+ * Stores main information about player
+ */
 public final class Player {
 
     @NotNull private final String name;
@@ -34,7 +37,11 @@ public final class Player {
         this.score = score;
     }
 
-    public void changeScore(int change) {
+    /**
+     * increment player's score
+     * @param change how much to add to score
+     */
+    public void incScore(int change) {
         score += change;
     }
 
