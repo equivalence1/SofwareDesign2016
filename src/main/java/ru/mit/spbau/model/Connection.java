@@ -10,14 +10,14 @@ import java.util.logging.Logger;
 
 public abstract class Connection {
 
-    @NotNull
-    private static final Logger LOGGER = Logger.getLogger(Connection.class.getName());
-
-    protected Socket socket;
     @NotNull protected final Queue<Proto.Message> messages;
+    @NotNull protected final Queue<Long> notifications;
+    protected long lastTimeNotified;
 
     public Connection() {
         messages = new LinkedBlockingDeque<>();
+        notifications = new LinkedBlockingDeque<>();
+        lastTimeNotified = 0;
     }
 
     /**
@@ -54,6 +54,11 @@ public abstract class Connection {
     public abstract boolean send(@NotNull Proto.Message message);
 
     /**
+     * Notify other user that we are typing something
+     */
+    public abstract void notifyTyping();
+
+    /**
      * receive one message from remote clients
      *
      * @return message received
@@ -70,6 +75,10 @@ public abstract class Connection {
      */
     public boolean hasPendingMessages() {
         return messages.size() > 0;
+    }
+
+    public long getLastTimeNotified() {
+        return lastTimeNotified;
     }
 
 }

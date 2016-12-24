@@ -1,5 +1,8 @@
 package ru.mit.spbau.view;
 
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import ru.mit.spbau.common.Proto;
 import ru.mit.spbau.control.ChatSceneController;
 import javafx.geometry.Pos;
@@ -23,6 +26,7 @@ public final class ChatSceneView implements SceneBuilder {
 
     private VBox center;
     private VBox messagesArea;
+    private Text typingSatus;
     private ScrollPane pane;
     private TextField userInput;
 
@@ -45,6 +49,9 @@ public final class ChatSceneView implements SceneBuilder {
         createWriteForm();
         createBack();
 
+        typingSatus = new Text();
+
+        root.setTop(typingSatus);
         root.setCenter(center);
         root.setBottom(userInput);
 
@@ -78,6 +85,18 @@ public final class ChatSceneView implements SceneBuilder {
      */
     public void displayRemoteMessage(@NotNull Proto.Message message) {
         displayMessage("-fx-background-color: #c4daff;", message); // light blue color
+    }
+
+    /**
+     * Set status of second user typing
+     * @param status true if other user is typing right now
+     */
+    public void setTypingStatus(boolean status) {
+        if (status) {
+            typingSatus.setText("User typing");
+        } else {
+            typingSatus.setText("");
+        }
     }
 
     private void displayMessage(@NotNull String style, @NotNull Proto.Message message) {
@@ -129,6 +148,8 @@ public final class ChatSceneView implements SceneBuilder {
             if (key.getCode().equals(KeyCode.ENTER)) {
                 controller.sendMessage(userInput.getText());
                 userInput.setText("");
+            } else {
+                controller.notifyTyping();
             }
         });
     }

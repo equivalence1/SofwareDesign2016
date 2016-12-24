@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -25,6 +24,7 @@ public final class ChatTask implements Runnable {
     private MessageDisplayer remoteDisplayer;
 
     private boolean shouldStop;
+    private boolean shouldNotify = false;
 
     public ChatTask(@NotNull String userName, @NotNull Connection connection) {
         this.userName = userName;
@@ -47,6 +47,11 @@ public final class ChatTask implements Runnable {
     public void stop() {
         shouldStop = true;
         connection.close();
+    }
+
+    @NotNull
+    public Connection getConnection() {
+        return connection;
     }
 
     /**
@@ -82,9 +87,17 @@ public final class ChatTask implements Runnable {
         toSend.add(content);
     }
 
+    /**
+     * notify connection that we are typing right now
+     */
+    public void notifyTyping() {
+        shouldNotify = true;
+    }
+
     private void handleMessages() {
         System.out.println("started chat task");
         while (!shouldStop) {
+            sendAllNotifications();
             sendAll();
             receiveAll();
             /*
@@ -126,6 +139,13 @@ public final class ChatTask implements Runnable {
         }
     }
 
+    private void sendAllNotifications() {
+        if (shouldNotify) {
+            shouldNotify = false;
+            connection.notifyTyping();
+        }
+    }
+
     private void receiveAll() {
         while (connection.hasPendingMessages()) {
             receiveOne();
@@ -134,11 +154,7 @@ public final class ChatTask implements Runnable {
 
     private void receiveOne() {
         Proto.Message message = connection.receive();
-        if (message == null) {
-            LOGGER.log(Level.WARNING, "Message is null but connection had pending messages.");
-        } else {
-            remoteDisplayer.displayMessage(message);
-        }
+        remoteDisplayer.displayMessage(message);
     }
 
 }

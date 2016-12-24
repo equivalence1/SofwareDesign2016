@@ -6,6 +6,9 @@ import ru.mit.spbau.model.Connection;
 import org.jetbrains.annotations.NotNull;
 import ru.mit.spbau.view.ChatSceneView;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,6 +24,10 @@ public final class ChatSceneController extends SceneController {
 
     private ChatSceneView view;
     private ChatTask task;
+    private TimerTask notificationTask;
+    private Timer timer;
+
+    private long lastTimeNotified;
 
     public ChatSceneController(@NotNull GeneralController controller, @NotNull Connection connection) {
         super(controller);
@@ -38,6 +45,22 @@ public final class ChatSceneController extends SceneController {
         view = new ChatSceneView(this);
         controller.getSceneManager().showNextScene(view);
         task.start();
+        notificationTask = new TimerTask() {
+            @Override
+            public void run() {
+                LOGGER.info("checking for notifications");
+                final Date date = new Date();
+                if (Math.abs(date.getTime() - connection.getLastTimeNotified()) < 1_000) { // 3 sec
+                    LOGGER.info("setting typing status to true");
+                    setTypingStatus(true);
+                } else {
+                    LOGGER.info("setting typing status to false");
+                    setTypingStatus(false);
+                }
+            }
+        };
+        timer = new Timer();
+        timer.schedule(notificationTask, 100, 1_000);
     }
 
     /**
@@ -46,6 +69,7 @@ public final class ChatSceneController extends SceneController {
     @Override
     public void stopControl() {
         task.stop();
+        notificationTask.cancel();
     }
 
     /**
@@ -71,6 +95,18 @@ public final class ChatSceneController extends SceneController {
     public void sendMessage(String content) {
         LOGGER.log(Level.INFO, String.format("adding message `%s` to send queue", content));
         task.addToSend(content);
+    }
+
+    /**
+     * notify other user that we are typing right now
+     */
+    public void notifyTyping() {
+        LOGGER.log(Level.INFO, "sending notification of typing");
+        task.notifyTyping();
+    }
+
+    private void setTypingStatus(boolean status) {
+        runOnPlatform(() -> view.setTypingStatus(status));
     }
 
 }

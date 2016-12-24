@@ -1,5 +1,6 @@
 package ru.mit.spbau.model;
 
+import com.google.protobuf.Empty;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.mit.spbau.common.MessengerGrpc;
 import ru.mit.spbau.common.Proto;
 
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -25,7 +27,8 @@ public final class RemoteConnection extends Connection {
     @NotNull private final String host;
     private int port;
     private ManagedChannel channel;
-    private StreamObserver<Proto.Message> requestObserver;
+    private StreamObserver<Proto.Message> requestMessageObserver;
+    private StreamObserver<Empty> requestNotifyObserver;
     @NotNull private CountDownLatch finishLatch;
 
     public RemoteConnection(@NotNull String host, int port) {
@@ -46,11 +49,33 @@ public final class RemoteConnection extends Connection {
         MessengerGrpc.MessengerStub asyncStub = MessengerGrpc.newStub(channel);
 
         finishLatch = new CountDownLatch(1);
-        requestObserver = asyncStub.sendMessage(new StreamObserver<Proto.Message>() {
+        requestMessageObserver = asyncStub.sendMessage(new StreamObserver<Proto.Message>() {
             @Override
             public void onNext(Proto.Message msg) {
                 LOGGER.log(Level.INFO, "got a message.");
                 messages.add(msg);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Status status = Status.fromThrowable(t);
+                LOGGER.log(Level.WARNING, "fail: {0}", status);
+                finishLatch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                LOGGER.log(Level.INFO, "finished client");
+                finishLatch.countDown();
+            }
+        });
+
+        requestNotifyObserver = asyncStub.notifyTyping(new StreamObserver<Empty>() {
+            @Override
+            public void onNext(Empty empty) {
+                LOGGER.log(Level.INFO, "got notification.");
+                final Date date = new Date();
+                lastTimeNotified = date.getTime();
             }
 
             @Override
@@ -75,11 +100,20 @@ public final class RemoteConnection extends Connection {
      */
     @Override
     public boolean send(@NotNull Proto.Message message) {
-        if (requestObserver == null) {
+        if (requestMessageObserver == null) {
             return false;
         }
-        requestObserver.onNext(message);
+        requestMessageObserver.onNext(message);
         return true;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void notifyTyping() {
+        requestNotifyObserver.onNext(Empty.getDefaultInstance());
     }
 
     /**
@@ -87,9 +121,9 @@ public final class RemoteConnection extends Connection {
      */
     @Override
     public void close() {
-        if (requestObserver != null) {
+        if (requestMessageObserver != null) {
             try {
-                requestObserver.onCompleted();
+                requestMessageObserver.onCompleted();
                 finishLatch.await(1, TimeUnit.MINUTES);
                 channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
             } catch (Exception e) {

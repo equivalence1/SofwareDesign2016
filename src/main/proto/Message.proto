@@ -14,5 +14,5 @@ message Message {
 
 service Messenger {
     rpc SendMessage(stream Message) returns (stream Message) {}
-    rpc NotifyTyping(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+    rpc NotifyTyping(stream google.protobuf.Empty) returns (stream google.protobuf.Empty) {}
 }
