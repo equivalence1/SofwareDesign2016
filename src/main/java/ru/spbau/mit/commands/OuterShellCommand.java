@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.spbau.mit.Shell;
 import ru.spbau.mit.parsing.Token;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,6 +44,7 @@ public final class OuterShellCommand extends Command {
 
         try {
             final ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
+            processBuilder.directory(new File(shell.pwd()));
             final Process process = processBuilder.start();
             final OutputStream processInput = process.getOutputStream();
 
