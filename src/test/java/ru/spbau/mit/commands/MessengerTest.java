@@ -1,9 +1,9 @@
 package ru.spbau.mit.commands;
 
-import common.Proto;
-import model.ChatTask;
-import model.HostConnectionTask;
-import model.RemoteConnectionTask;
+import ru.mit.spbau.common.Proto;
+import ru.mit.spbau.model.ChatTask;
+import ru.mit.spbau.model.HostConnectionTask;
+import ru.mit.spbau.model.RemoteConnectionTask;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -94,9 +94,9 @@ public class MessengerTest {
         hostTask.registerNotifySuccess(this::notifySuccessHost);
 
         hostTask.start();
-        Thread.sleep(100);
+        Thread.sleep(1000);
 
-        final InetAddress host = InetAddress.getLocalHost();
+        final String host = "127.0.0.1";
         final int port = hostTask.getConnection().getPort();
         remoteTask = new RemoteConnectionTask(host, port);
         remoteTask.registerNotifySuccess(this::notifySuccessRemote);
